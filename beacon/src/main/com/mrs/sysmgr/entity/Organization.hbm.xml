@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+	<class name="com.mrs.sysmgr.entity.Organization"
+		table="t_sys_organization" dynamic-update="true"
+		dynamic-insert="true">
+
+		<cache usage="nonstrict-read-write" />
+
+		<id name="id" type="java.lang.String">
+			<column name="ID" />
+			<generator class="uuid.hex" />
+		</id>
+		<property name="orgCode" type="java.lang.String">
+			<column name="ORGCODE" length="16" unique="true" />
+		</property>
+		<property name="orgName" type="java.lang.String">
+			<column name="ORGNAME" length="64" />
+		</property>
+		<property name="orgLelvl" type="java.lang.Integer">
+			<column name="ORGLEVEL" length="4" />
+		</property>
+		<property name="address" type="java.lang.String">
+			<column name="ADDRESS" length="80" />
+		</property>
+		<property name="status" type="java.lang.String">
+			<column name="STATUS" length="1" />
+		</property>
+		<property name="managername" type="java.lang.String">
+			<column name="MANAGERNAME" length="80" />
+		</property>
+		<property name="contactname" type="java.lang.String">
+			<column name="CONTACTNAME" length="80" />
+		</property>
+		<property name="contactphone" type="java.lang.String">
+			<column name="CONTACTPHONE" length="80" />
+		</property>
+		<property name="respon" type="java.lang.String">
+			<column name="RESPON" length="400" />
+		</property>
+		
+		<property name="treePath" type="java.lang.String">
+			<column name="TREEPATH" length="160" />
+		</property>
+		<property name="operateTime" type="java.util.Date">
+			<column name="OperateTime" />
+		</property>
+		<property name="operatorCode" type="java.lang.String">
+			<column name="operatorCode" length="32" />
+		</property>
+		<property name="operatorName" type="java.lang.String">
+			<column name="operatorName" length="60" />
+		</property>
+		<property name="operateType" type="java.lang.String">
+			<column name="OperateType" length="1" />
+		</property>
+
+		<set name="users" lazy="true" inverse="true">
+			<key column="ORGID"></key>
+			<one-to-many class="com.mrs.sysmgr.entity.User" />
+		</set>
+
+		<many-to-one name="father" column="PARENTID" not-null="false"
+			outer-join="false">
+		</many-to-one>
+
+		<set name="children" lazy="true" inverse="true">
+			<key column="PARENTID"></key>
+			<one-to-many class="com.mrs.sysmgr.entity.Organization" />
+		</set>
+
+	</class>
+
+</hibernate-mapping>
+

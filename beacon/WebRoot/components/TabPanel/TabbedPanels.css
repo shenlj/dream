@@ -1,0 +1,117 @@
+﻿@charset "UTF-8";
+
+.TabbedPanels {
+	margin: 0px;
+	padding: 0px;
+	float: left;
+	clear: none;
+	width: 100%; /* IE Hack to force proper layout when preceded by a paragraph. (hasLayout Bug)*/}
+
+.TabbedPanelsTabGroup {
+	margin: 0px;
+	padding: 0px;}
+
+.TabbedPanelsTab {
+	position: relative;
+	top: 1px;
+	float: left;
+	padding: 4px 10px;
+	margin: 0px 1px 0px 0px;
+	font: bold 1em sans-serif;
+	background-color: #DDD;
+	list-style: none;
+	border-left: solid 1px #72A7AB;
+	border-bottom: solid 1px #72A7AB;
+	border-top: solid 1px #72A7AB;
+	border-right: solid 1px #72A7AB;	
+	text-align: center;
+	white-space: nowrap;
+	/*background-image: url(Images/image_72.gif);
+	background-repeat: repeat-x;*/
+	font-family: "宋体";
+	font-size: 14px;
+	font-weight: bold;
+	color: #FFFFFF;
+	cursor: pointer;}
+
+.TabbedPanelsTabHover {
+	text-align: center;
+	white-space: nowrap;
+	/*background-image: url(Images/image_72.gif);
+	background-repeat: repeat-x;*/
+	font-family: "宋体";
+	font-size: 14px;
+	font-weight: bold;
+	color: #134E6E;}
+
+.TabbedPanelsTabSelected {
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	cursor: pointer;
+	text-align: center;
+	white-space: nowrap;
+	background-image: url(Images/image_68.gif); 
+	padding-bottom: 5px;
+	background-color: #fff;
+	background-repeat: repeat-x;
+	font-family: "宋体";
+	font-size: 14px;
+	font-weight: bold;
+	color: #FFF;/*#134E6E*/
+    border-left: solid 1px #72A7AB;
+	border-bottom: solid 0px #fff;
+	border-top: solid 1px #72A7AB;
+	border-right: solid 1px #72A7AB;
+	cursor: default;}
+
+.TabbedPanelsTab a {
+	color: black;
+	text-decoration: none;}
+
+.TabbedPanelsContentGroup {
+	clear: both;
+	border: solid 1px #72A7AB;
+/*	border-left: solid 1px #72A7AB;
+	border-bottom: solid 1px #72A7AB;
+	border-top: solid 1px #72A7AB;
+	border-right: solid 1px #72A7AB;*/
+	/*background-color: #FFF;*/}
+
+.TabbedPanelsContent {
+	padding: 4px;}
+
+.TabbedPanelsContentVisible {
+}
+.VTabbedPanels {
+    width: 100%;
+    position: relative;}
+ 
+.VTabbedPanels .TabbedPanelsTabGroup {
+	width: 120px;
+	border-top: solid 1px #72A7AB;
+	border-left: solid 1px #72A7AB;
+	background-color: #fff;
+	position: absolute;
+	top: 0;
+	left: 0;}
+.VTabbedPanels .TabbedPanelsTab {
+	float: none;
+    width: 100px;
+	margin: 0px;
+	border-top: none;
+	border-left: none;
+	position: relatvie;
+	top: 0px;}
+.VTabbedPanels .TabbedPanelsTabSelected {
+    width: 101px;
+	background-color: #fff;
+	border-right: 1px solid #fff;
+	border-bottom: solid 1px #72A7AB;}
+
+.VTabbedPanels .TabbedPanelsContentGroup {
+	clear: none;
+	margin-left: 121px;
+	padding: 0px;
+	min-height: 15em;
+	_height: 15em;}
+

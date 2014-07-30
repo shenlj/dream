@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
+  default-autowire="byName">
+  
+  <!-- 任务信息 -->
+  <bean id="taskInfoDao" class="com.mrs.taskmgr.dao.hibernate.TaskInfoDaoImp" />
+  <bean id="taskInfoService" class="com.mrs.taskmgr.service.imp.TaskInfoServiceImp" />
+  
+  <!-- 任务内容 -->
+  <bean id="taskContentDao" class="com.mrs.taskmgr.dao.hibernate.TaskContentDaoImp" />
+  <bean id="taskContentService" class="com.mrs.taskmgr.service.imp.TaskContentServiceImp" />
+  
+  <!-- 任务执行情况 -->
+  <bean id="taskExecuteDao" class="com.mrs.taskmgr.dao.hibernate.TaskExecuteDaoImp" />
+  <bean id="taskExecuteService" class="com.mrs.taskmgr.service.imp.TaskExecuteServiceImp" />
+  
+  <!-- 指标填报 -->
+  <bean id="taskIndexValueDao" class="com.mrs.taskmgr.dao.hibernate.TaskIndexValueDaoImp" />
+  <bean id="taskIndexValueService" class="com.mrs.taskmgr.service.imp.TaskIndexValueServiceImp" />
+  
+   <!-- 素材搜集信息表 -->
+  <bean id="taskCollectmatDao" class="com.mrs.taskmgr.dao.hibernate.TaskCollectmatDaoImp" />
+  <bean id="taskCollectmatService" class="com.mrs.taskmgr.service.imp.TaskCollectmatServiceImp" />
+  
+  <!-- 报告编写 -->
+  <bean id="taskReportWriteDao" class="com.mrs.taskmgr.dao.hibernate.TaskReportWriteDaoImp" />
+  <bean id="taskReportWriteService" class="com.mrs.taskmgr.service.imp.TaskReportWriteServiceImp" />
+</beans>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+    "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="com.mrs.sysmgr.entity.Role" table="t_sys_role" >
+    	<id name="id" type="java.lang.String">
+            <column name="ID"/>
+            <generator class="uuid.hex" />
+        </id>
+        <property name="descn" type="java.lang.String">
+            <column name="DESCN" length="400" not-null="true" />
+        </property>
+        <property name="name" type="java.lang.String">
+            <column name="NAME" length="100" not-null="true" />
+        </property>
+        <property name="isAdmin" type="java.lang.String">
+            <column name="ISADMIN" length="1" />
+        </property>            
+        <property name="status" type="java.lang.String">
+            <column name="STATUS" length="1" />
+        </property>    
+        <property name="operateTime" type="java.util.Date">
+            <column name="OperateTime" />
+        </property>
+        <property name="operatorCode" type="java.lang.String">
+            <column name="operatorCode" length="32" />
+        </property>
+        <property name="operatorName" type="java.lang.String">
+            <column name="operatorName" length="60" />
+        </property>
+         <property name="operateType" type="java.lang.String">
+            <column name="OperateType" length="1" />
+        </property>
+        <set name="users" table="T_SYS_USER_ROLE" lazy="true">
+            <key column="ROLEID"/>
+            <many-to-many column="USERID" class="com.mrs.sysmgr.entity.User"  />
+        </set>
+       	<set name="permissions" table="T_SYS_ROLE_PERMISSION" lazy="true">
+        	<key column="ROLEID"/>
+        	<many-to-many column="PERMISSIONID" class="com.mrs.sysmgr.entity.Permission"/>
+    	</set>
+    </class>    
+</hibernate-mapping>
+

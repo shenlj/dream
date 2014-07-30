@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-<properties fileName="sql/sysmgr.properties">SQL_SYSMGR</properties>
 <properties fileName="sql/commons.properties">COMMONS</properties>
+<properties fileName="sql/sysmgr.properties">SQL_SYSMGR</properties>
+<properties fileName="sql/report.properties">SQL_REPORT</properties>
+<properties fileName="sql/task.properties">SQL_TASK</properties>
+<properties fileName="conf/waite.properties">WAITE</properties>
 <properties fileName="conf/mrs.properties">MRSCONFIG</properties>
 </configuration>

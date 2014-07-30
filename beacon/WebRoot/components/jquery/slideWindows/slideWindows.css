@@ -1,0 +1,112 @@
+@charset "UTF-8";
+
+/* -----------------------
+
+   slideWindows.css 
+   edit by qiany
+   date 2011-5-2
+   
+   ----------------------- */
+ 
+
+/* side tabs */
+ul, li, div {
+  padding: 0px;
+  margin: 0px;
+  list-style: none;
+}
+.tab-left-wrapper, .tab-right-wrapper {
+  position: fixed;
+  top: 65px;
+  z-index: 9999;
+}
+
+.tab-left-wrapper {
+  left: 2px;  
+}
+
+.tab-right-wrapper {
+  right: 2px; 
+}
+
+.tab-left-top, .tab-left-top-hover, .tab-left, .tab-left-hover,
+.tab-right-top, .tab-right-top-hover, .tab-right, .tab-right-hover {
+  width: 13px;
+  padding: 0 6px;
+  line-height: 110%;
+  color: white;
+  cursor: default;
+}
+
+.tab-left-top, .tab-right-top, 
+.tab-top-chosen, .tab-top-hover {
+  height: 88px;
+  padding-top: 12px;  
+}
+
+.tab-left, .tab-right,
+.tab-chosen, .tab-hove {
+  height: 83px;
+  padding-top: 22px;
+  margin-top: -24px;  
+}
+
+.tab-left-top, .tab-right-top {
+  background: url(images/side-tab-top.gif) no-repeat; 
+}
+
+.tab-top-chosen, .tab-top-hover {
+  background: url(images/side-tab-top-hover.gif) no-repeat;
+}
+
+.tab-left, .tab-right { 
+  background: url(images/side-tab.gif) no-repeat;
+}
+
+.tab-chosen, .tab-hover {
+  background: url(images/side-tab-hover.gif) no-repeat;
+}
+
+
+
+/* windows */
+.slideWindow {
+  position: fixed;
+  top: 4px;
+  z-index: 9990;
+  border: 3px solid #2e76bd; 
+  background: #fff;
+}
+
+.slideWindowTitle {
+  height: 22px;
+  background-color: #2e76bd;
+  text-indent: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.closeWindowBtn {
+  position: absolute;
+  top: 2px;
+  right: 3px; 
+  width: 44px;
+  height: 18px;
+  background: url(images/close.jpg) no-repeat right top;
+  cursor: pointer;
+}
+
+
+
+/* position fixed for ie6 */ 
+
+* html, * html body {
+  background-image: url(about: blank);
+  background-attachment: fixed;
+}
+
+* html .tab-left-wrapper, * html .tab-right-wrapper, * html .slideWindow {
+  position: absolute;
+  top: expression(eval(parseInt(document.documentElement.scrollTop) + 6));
+} 

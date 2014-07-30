@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
+  default-autowire="byName">
+  
+  <bean id="userDao" class="com.mrs.sysmgr.dao.hibernate.UserDaoImp" />
+  <bean id="userService" class="com.mrs.sysmgr.service.imp.UserServiceImp" />
+  
+  <bean id="roleDao" class="com.mrs.sysmgr.dao.hibernate.RoleDaoImp" />
+  <bean id="roleService" class="com.mrs.sysmgr.service.imp.RoleServiceImp" />
+  
+  <bean id="organizationDao" class="com.mrs.sysmgr.dao.hibernate.OrganizationDaoImp" />
+  <bean id="organizationService" class="com.mrs.sysmgr.service.imp.OrganizationServiceImp" />
+  
+  <bean id="loginAuditDao" class="com.mrs.sysmgr.dao.hibernate.LoginAuditDaoImp" />
+  <bean id="loginAuditService" class="com.mrs.sysmgr.service.imp.LoginAuditServiceImp" />
+  
+  <bean id="permissionDao" class="com.mrs.sysmgr.dao.hibernate.PermissionDaoImp"/>
+  <bean id="permissionService" class="com.mrs.sysmgr.service.imp.PermissionServiceImp" />
+  
+  <bean id="taskDao" class="com.mrs.sysmgr.dao.hibernate.TaskDaoImp"/>
+  <bean id="taskService" class="com.mrs.sysmgr.service.imp.TaskServiceImp"/>
+  
+  <bean id="waiteListService" class="com.mrs.sysmgr.service.imp.WaiteListServiceImp" />
+  
+</beans>

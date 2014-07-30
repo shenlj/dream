@@ -4,15 +4,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title></title>
+<title>可持续发展报告系统-登陆页面</title>
 <%@include file="/common/includes.jsp" %>
 <link rel="stylesheet" type="text/css" href="${ctx}/css/login.css">
 <script type="text/javascript" src="${ctx}/js/login.js" ></script>
-<script type="text/javascript"  >
- function d(){
- document.forms[0].submit();
- }
-</script>
 </head>
 
 <body onkeydown="BindEnter(event)">
@@ -20,7 +15,6 @@
 <div id="logHeader_bg">
   <div id="logHeader"></div>
 </div>
-<form action="${ctx}/sysmgr/znshSysmgr!listPkrwWithXnxq.action" method="post"></form>
 
 <!-- 登陆页面登陆框 -->
 <div id="logBox">
@@ -34,7 +28,7 @@
       <input type="password" class="r_passwd_input" id="passwd"/>
     </div>
     <div class="login_btn_wrap">
-      <input type="button" class="login" id="login" onclick="d()"/>
+      <input type="button" class="login" id="login"/>
     </div>
     <div class="login_btn_wrap">
       <input type="button" class="reset" id="reset"/>
