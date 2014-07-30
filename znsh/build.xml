@@ -1,0 +1,719 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 工程定义，定义工程基本目录为根目录，定义工程执行Ant的默认行为是编译 -->
+<project name="mrs" default="generate.code" basedir=".">
+
+	<!-- 导入properties文件 (app settings, classpath, jar file locations) -->
+	<import file="build-properties.xml" />
+
+	<!-- dbunit的数据源连接##########
+	<property file="${dbunit.dir}/import.properties"/>
+	<property file="${dbunit.dir}/export.properties"/>
+	 -->
+
+	<!-- =========================================
+	初始化任务，调用(清空构建)任务
+	 ========================================= -->
+	<target name="init" depends="clean"></target>
+
+	<!-- =========================================
+	清空构建(先删除整个class文件夹后再创建新的class文件夹)
+	 ========================================= -->
+	<target name="clean">
+		<delete dir="${classes.dir}" />
+		<mkdir dir="${classes.dir}" />
+	</target>
+
+	<!-- =========================================
+	复制工程中使用到的配置文件
+	 ========================================= -->
+	<target name="copy" description="copy config file">
+		<!-- 复制的目的路径:工程编译后的类的存放路径的文件夹中-->
+		<copy todir="${classes.dir}">
+			<fileset dir="${src.main.res.dir}">
+				<!-- 模式匹配:包含工程的配置文件夹下所有的文件-->
+				<include name="**" />
+			</fileset>
+			<fileset dir="${src.main.java.dir}">
+				<!-- 模式匹配:排除工程的Java文件夹下所有的.java文件-->
+				<exclude name="**/*.java" />
+			</fileset>
+			<fileset dir="${src.test.res.dir}">
+				<!-- 模式匹配:包含测试工程的配置文件夹下所有的文件-->
+				<include name="**" />
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- =========================================
+	复制工程中使用到的jar文件
+	 ========================================= -->
+	<target name="copyJar" description="copy jar file">
+		<!-- 拷贝工程中使用到的各种库文件及Jar文件 -->
+		<!-- flatten="true":如果源文件夹包含文件树结构，则打破文件树结构，将文件都拷贝到目标文件夹中 -->
+		<!-- 如果源文件夹包含的文件树结构含有多个同名的文件，则只有第一个被拷贝到目的文件夹中，除非 在forceoverwrite属性为true -->
+		<copy todir="${classes.lib.dir}" flatten="true">
+			<!-- 拷贝${lib.dir}目录下所有文件的集合 -->
+			<fileset dir="${lib.dir}">
+				<!-- 除去${lib.dir}目录下(cas/**)目录中的所有文件 -->
+				<exclude name="cas/**" />
+				<!-- 除去${lib.dir}目录下(jaxb/**)目录中的所有文件 -->
+				<exclude name="jaxb/**" />
+				<!-- 除去${lib.dir}目录下(tdd/emma/**)目录中的所有文件 -->
+				<exclude name="tdd/emma/**" />
+				<!-- 除去${lib.dir}目录下(tdd/dbunit/**)目录中的所有文件 -->
+				<exclude name="tdd/dbunit/**" />
+				<!-- 除去${lib.dir}目录下(hibernate-tools/**)目录中的所有文件 -->
+				<exclude name="hibernate-tools/**" />
+				<!-- 除去${lib.dir}目录下(tdd/selenium/selenium-server1.0.3.jar)目录中的所有文件 -->
+				<exclude name="tdd/selenium/selenium-server1.0.3.jar" />
+				<!-- 除去${lib.dir}目录下(codereview/**)目录中的所有文件 -->
+				<exclude name="codereview/**" />
+				<!-- 包含${lib.dir}目录下(**/*.jar)目录树中的所有jar文件 -->
+				<include name="**/*.jar"/>
+			</fileset>
+		</copy>
+		<!-- 拷贝工程中使用到的Jeaw框架的Jar文件 -->
+		<copy todir="${classes.lib.dir}" flatten="true">
+			<!-- 拷贝${lib.dir}目录下所有文件的集合 -->
+			<fileset dir="${dist.dir}">
+				<!-- 包含${dist.dir}目录下(jeaw.jar)文件 -->
+				<include name="jeaw.jar"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- =========================================
+	工程的编译
+	 ========================================= -->
+	<!-- 前置任务:初始化，复制工程中使用到的配置文件，复制工程中使用到的jar文件 -->
+	<target name="compile" depends="init,copy,copyJar" description="compile the source files">
+		<!-- 工程编译时的代码包括:工程以及测试工程下的java文件代码 -->
+		<!-- 编译后的class存放到工程发布后的类的存放路径 -->
+		<!-- 编译方式:指示编译器应该带调试信息编译源文件 -->
+		<!-- 编译的编码格式:UTF-8 -->
+		<javac srcdir="${src.main.java.dir}:${src.test.java.dir}" destdir="${classes.dir}" debug="true" encoding="UTF-8">
+			<!-- 置命令行参数:file,line,path,value.其中value直接指定编译参数，如-g,file,line,path
+			<compilerarg value="-Xlint:unchecked"/>
+			<compilerarg value="-Xlint:deprecation"/>
+			-->
+			<!-- 文件夹中class会被导入的jar包 -->
+			<classpath refid="classpath" />
+		</javac>
+	</target>
+
+	<!-- =========================================
+	工程的部署(Tomcat)
+	 ========================================= -->
+	<!-- 前置任务:工程的编译 -->
+	<target name="tomcat-publish" depends="compile" description="publish-tomcat">
+		<!-- 删除服务器发布路径下，本工程已有的发布文件 -->
+		<delete dir="${tomcat.dir}/${web.name}" />
+		<!-- 新建本工程的发布目录 -->
+		<mkdir dir="${tomcat.dir}/${web.name}" />
+		<!-- 拷贝文件到本工程的发布目录下 -->
+		<copy todir="${tomcat.dir}/${web.name}">
+			<!-- 拷贝${web.root}目录下所有文件的集合 -->
+			<fileset dir="${web.root}">
+				<!-- 除去${web.root}目录下(**/*.jar)目录中的所有jar文件 -->
+				<exclude name="**/*.jar" />
+				<!-- 除去${web.root}目录下(**/*test.*)目录中的所有*test.*文件 -->
+				<exclude name="**/*test.*" />
+				<!-- 除去${web.root}目录下(**/*Test.*)目录中的所有*Test.*文件 -->
+				<exclude name="**/*Test.*" />
+				<!-- 除去${web.root}目录下(**/test/**/*.class)目录中的所有class文件 -->
+				<exclude name="**/test/**/*.class" />
+			</fileset>
+		</copy>
+		<!-- 拷贝文件到本工程的发布目录下的lib文件夹 -->
+		<!-- flatten="true":如果源文件夹包含文件树结构，则打破文件树结构，将文件都拷贝到目标文件夹中 -->
+		<!-- 如果源文件夹包含的文件树结构含有多个同名的文件，则只有第一个被拷贝到目的文件夹中，除非 在forceoverwrite属性为true -->
+		<copy todir="${tomcat.dir}/${web.name}/WEB-INF/lib" flatten="true">
+			<!-- 拷贝${lib.dir}目录下，工程中使用到的各种库文件及Jar文件 -->
+			<fileset dir="${lib.dir}">
+				<!-- 包含${lib.dir}目录下，以下的各文件 -->
+				<exclude name="ojdbc6.jar" />
+				<exclude name="**/*.jar" />
+				<include name="**/*.jar" />
+				<!--
+				<include name="struts2/*.jar" />
+				<include name="jsp/*.jar" />
+				<include name="spring/*.jar" />
+				<include name="hibernate/*.jar" />
+				<include name="jpa/*.jar" />
+				<include name="aspectj/*.jar" />
+				<include name="commons/*.jar" />
+				<include name="cache/*.jar" />
+				<include name="security/*.jar" />
+				<include name="log/*.jar" />
+				<include name="ecside/*.jar" />
+				<include name="quartz/*.jar" />
+				<include name="xml/*.jar" />
+				<include name="json/*.jar" />
+				<include name="jdbcDriver/ojdbc14.jar" />
+				<include name="p6spy/*.jar" />
+				<include name="xmemcached/*.jar" />
+				<include name="jta/*.jar" />
+				<include name="jmail/*.jar" />
+				<include name="webservice/cxf/*.jar" />
+				<include name="file/**/*.jar"/>
+				<include name="html/*.jar"/>
+				<include name="jodconverter/*.jar" />
+				<include name="gis/*.jar" />
+				<include name="mina/*.jar" />
+				<include name="jcaptcha/*.jar" />
+				-->
+			</fileset>
+		</copy>
+		<!-- 拷贝文件到本工程的发布目录下的lib文件夹 -->
+		<copy todir="${tomcat.dir}/${web.name}/WEB-INF/lib" flatten="true">
+			<!-- 拷贝${dist.dir}目录下，工程中使用到的Jeaw框架的Jar文件 -->
+			<fileset dir="${dist.dir}">
+				<!-- 包含${dist.dir}目录下jeaw.jar文件 -->
+				<include name="jeaw.jar"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<!-- =========================================
+	工程的部署(Glassfish)
+	 ========================================= -->
+	<!--
+	<target name="glassfish-publish" depends="compile" description="publish-glassfish">
+		<delete dir="${glassfish.dir}/${web.name}" />
+		<mkdir dir="${glassfish.dir}/${web.name}" />
+ 		<copy todir="${glassfish.dir}/${web.name}">
+			<fileset dir="${web.root}">
+				<exclude name="**/*.jar" />
+				<exclude name="**/*test.*" />
+				<exclude name="**/*Test.*" />
+				<exclude name="**/test/**/*.class" />
+			</fileset>
+		</copy>
+		<copy todir="${glassfish.dir}/${web.name}/WEB-INF/lib" flatten="true">
+			<fileset dir="${lib.dir}">
+				<include name="struts2/*.jar" />
+				<include name="jsp/*.jar" />
+				<include name="spring/*.jar" />
+				<include name="hibernate/*.jar" />
+				<include name="jpa/*.jar" />
+				<include name="aspectj/*.jar" />
+				<include name="commons/*.jar" />
+				<include name="cache/*.jar" />
+				<include name="security/*.jar" />
+				<include name="log/*.jar" />
+				<include name="ecside/*.jar" />
+				<include name="quartz/*.jar" />
+				<include name="xml/*.jar" />
+				<include name="json/*.jar" />
+				<include name="jta/*.jar" />
+				<include name="file/**/*.jar"/>
+				<include name="html/*.jar"/>
+				<include name="jodconverter/*.jar" />
+				<include name="gis/*.jar" />
+				<include name="mina/*.jar" />
+				<include name="jcaptcha/*.jar" />
+			</fileset>
+		</copy>
+		<copy todir="${glassfish.dir}/${web.name}/WEB-INF/lib" flatten="true">
+			<fileset dir="${dist.dir}">
+				<include name="jeaw.jar"/>
+			</fileset>
+		</copy>
+	</target>
+	-->
+
+	<!-- =========================================
+	工程的部署(Jboss)
+	 ========================================= -->
+	<!--
+	<target name="jboss-publish" depends="compile" description="publish-jboss">
+		<delete dir="${jboss.dir}/${war.file}" />
+		<mkdir dir="${jboss.dir}/${war.file}" />
+		<copy todir="${jboss.dir}/${war.file}">
+			<fileset dir="${web.root}">
+				<exclude name="**/*.jar" />
+				<exclude name="**/*test.*" />
+				<exclude name="**/*Test.*" />
+				<exclude name="**/test/**/*.class" />
+			</fileset>
+		</copy>
+		<copy todir="${jboss.dir}/${war.file}/WEB-INF/lib" flatten="true">
+			<fileset dir="${lib.dir}">
+				<include name="struts2/*.jar" />
+				<include name="jsp/*.jar" />
+				<include name="spring/*.jar" />
+				<include name="hibernate/asm*.jar" />
+				<include name="hibernate/cglib*.jar" />
+				<include name="aspectj/*.jar" />
+				<include name="commons/*.jar" />
+				<include name="cache/*.jar" />
+				<include name="security/*.jar" />
+				<include name="log/*.jar" />
+				<include name="ecside/*.jar" />
+				<include name="json/*.jar" />
+				<include name="jdbcDriver/ojdbc14.jar" />
+				<include name="xmemcached/*.jar" />
+				<include name="webservice/cxf/*.jar" />
+				<include name="xml/XmlSchema-1.4.5.jar" />
+				<include name="file/**/*.jar"/>
+				<include name="html/*.jar"/>
+				<include name="jodconverter/*.jar" />
+				<include name="gis/*.jar" />
+				<include name="mina/*.jar" />
+				<include name="jcaptcha/*.jar" />
+			</fileset>
+		</copy>
+		<copy todir="${jboss.dir}/${war.file}/WEB-INF/lib" flatten="true">
+			<fileset dir="${dist.dir}">
+				<include name="jeaw.jar"/>
+			</fileset>
+		</copy>
+	</target>
+	-->
+
+	<!-- =========================================
+	启动应用服务器(Tomcat)
+	 ========================================= -->
+	<target name="tomcat-start" description="==启动tomcat==">
+		<echo message="启动tomcat应用服务器">
+		</echo>
+		<java dir="${tomcat.home.dir}/bin/" jar="${tomcat.home.dir}/bin/bootstrap.jar" fork="true">
+			<arg value="start"/>
+			<jvmarg value="-Xms128m"/>
+			<jvmarg value="-Xmx512m"/>
+		</java>
+	</target>
+
+	<!-- =========================================
+	启动应用服务器(Glassfish)
+	 ========================================= -->
+	<!--
+	<target name="glassfish-start" description="==启动glassfish==">
+		<echo message="启动glassfish应用服务器">
+		</echo>
+		<java dir="${glassfish.home.dir}/glassfish/modules/" jar="${glassfish.home.dir}/glassfish/modules/admin-cli.jar" fork="true">
+			<arg value="start-domain"/>
+			<arg value="domain1"/>
+		</java>
+	</target>
+	-->
+
+	<!-- =========================================
+	启动应用服务器(Jboss)
+	 ========================================= -->
+	<!--
+	<target name="jboss-start" description="Start the JBoss server.">
+		<java dir="${deploy.configuration.dir}" classname="org.jboss.Main" fork="true" spawn="false">
+			<arg line="-c ${deploy.configuration}"/>
+			<jvmarg value="-Xms128m"/>
+			<jvmarg value="-Xmx512m"/>
+			<classpath>
+				<pathelement path="${jboss.home.dir}/bin/run.jar"/>
+			</classpath>
+		</java>
+	</target>
+	-->
+
+	<!-- =========================================
+	 关闭应用服务器(Tomcat)
+	 ========================================= -->
+	<target name="tomcat-stop">
+		<echo message="停止Tomcat应用服务器" />
+		<java dir="${tomcat.home.dir}/bin/" jar="${tomcat.home.dir}/bin/bootstrap.jar" fork="true">
+			<arg value="stop"/>
+		</java>
+	</target>
+
+	<!-- =========================================
+	 关闭应用服务器(Glassfish)
+	 ========================================= -->
+	<!--
+	<target name="glassfish-stop">
+		<echo message="停止glassfish应用服务器" />
+		<java dir="${glassfish.home.dir}/glassfish/modules/" jar="${glassfish.home.dir}/glassfish/modules/admin-cli.jar" fork="true">
+			<arg value="stop-domain"/>
+			<arg value="domain1"/>
+		</java>
+	</target>
+	-->
+
+	<!-- =========================================
+	 关闭应用服务器(Jboss)
+	 ========================================= -->
+	<!--
+	<target name="jboss-stop" description="Stop the JBoss server.">
+		<echo>${deploy.configuration.dir}</echo>
+		<java dir="${deploy.configuration.dir}" classname="org.jboss.Shutdown"
+			fork="true">
+			<arg line="-S"/>
+			<classpath>
+				<pathelement path="${jboss.home.dir}/bin/shutdown.jar"/>
+			</classpath>
+		</java>
+	</target>
+	-->
+
+	<!-- =========================================
+	 重新启动应用服务器(Tomcat)
+	 ========================================= -->
+	<target name="tomcat-restart" description="==重新启动应用服务器==">
+		<echo message="重新启动tomcat应用服务器">
+		</echo>
+		<antcall target="tomcat-stop">
+		</antcall>
+		<sleep seconds="5" />
+		<antcall target="tomcat-start">
+		</antcall>
+	</target>
+
+	<!-- =========================================
+	 重新启动应用服务器(Glassfish)
+	 ========================================= -->
+	<!--
+	<target name="glassfish-restart" description="==重新启动应用服务器==">
+		<echo message="重新启动glassfish应用服务器">
+		</echo>
+		<antcall target="glassfish-stop">
+		</antcall>
+		<sleep seconds="5" />
+		<antcall target="glassfish-start">
+		</antcall>
+	</target>
+	-->
+
+	<!-- =========================================
+	 重新启动应用服务器(Jboss)
+	 ========================================= -->
+	<!--
+	<target name="jboss-restart" description="==重新启动应用服务器==">
+		<echo message="重新启动jboss应用服务器">
+		</echo>
+		<antcall target="jboss-stop">
+		</antcall>
+		<sleep seconds="5" />
+		<antcall target="jboss-start">
+		</antcall>
+	</target>
+	-->
+
+	<!-- =========================================
+	 重新部署应用服务器(Glassfish build)
+	 ========================================= -->
+	<!--
+	<target name="glassfish-build" description="==build==">
+		<antcall target="glassfish-stop">
+		</antcall>
+		<sleep seconds="5" />
+		<antcall target="glassfish-publish">
+		</antcall>
+		<antcall target="glassfish-start">
+		</antcall>
+	</target>
+	-->
+
+	<!-- junit测试程序 -->
+	<target name="junit" depends="compile">
+		<mkdir dir="${junit.home.dir}" />
+		<junit printsummary="yes" fork="true" haltonfailure="no" failureproperty="tests.failed" showoutput="true">
+			<classpath location="${instrument.dir}" />
+			<classpath refid="classpathfull"/>
+			<!--指明代码覆盖率的元数据的存放位置-->
+			<jvmarg value="-Demma.coverage.out.file=${coverage.dir}/metadata.emma" />
+			<jvmarg value="-Demma.coverage.out.merge=true" />
+			<formatter type="xml" />
+			<batchtest todir="${junit.home.dir}">
+				<fileset dir="${classes.dir}">
+					<include name="**/AuditRecordActionTest.*" />
+				</fileset>
+			</batchtest>
+		</junit>
+		<junitreport todir="${junit.home.dir}">
+			<fileset dir="report">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${junit.home.dir}" />
+		</junitreport>
+		<fail if="tests.failed">
+			---------------------------------------------------------
+			One or more tests failed, check the report for detail...
+			---------------------------------------------------------
+		</fail>
+	</target>
+
+	<!-- selenium -->
+	<target name="selenium-start">
+        <java jar="${lib.dir}/tdd/selenium/selenium-server1.0.3.jar" fork="true">
+            <arg line="-timeout 30"/>
+            <arg line="-port 4440"/>
+            <jvmarg value="-Dhttp.proxyHost=proxy.corporate.com"/>
+            <jvmarg value="-Dhttp.proxyPort=3128"/>
+        </java>
+    </target>
+
+    <target name="selenium-stop">
+        <get taskname="selenium-shutdown" src="http://localhost:4440/selenium-server/driver/?cmd=shutDownSeleniumServer" dest="result.txt" ignoreerrors="true"/>
+        <echo taskname="selenium-shutdown" message="DGF Errors during shutdown are expected"/>
+    </target>
+
+	<!--对编译在路径classes.dir中的Java类注入字节码, 并且把注入字节码的新Java类存放到路径instrument.dir-->
+
+	<target name="coverage-instrument">
+		<mkdir dir="${instrument.dir}" />
+		<mkdir dir="${coverage.dir}" />
+		<emma enabled="${emma.enabled}">
+			<instr instrpathref="userpath"
+				destdir="${instrument.dir}"
+				metadatafile="${coverage.dir}/metadata.emma"
+				merge="true">
+			</instr>
+		</emma>
+	</target>
+
+	<!--生成代码覆盖率报告-->
+	<target name="coverage-gen-report" depends="coverage-instrument,junit">
+		<!--如果属性emma.enabled的值是true，就生成代码覆盖率报告 -->
+		<emma enabled="${emma.enabled}">
+			<report sourcepath="${src.main.java.dir}"
+			sort="+block,+name,+method,+class"
+			metrics="method:70,block:80,line:80,class:100">
+				<fileset dir="${coverage.dir}">
+					<include name="*.emma" />
+				</fileset>
+				<html outfile="${coverage.dir}/coverage.html"
+				depth="source" columns="name,class,method,block,line" />
+			</report>
+		</emma>
+	</target>
+
+	<!-- java生成xml约束 -->
+	<target name="xml-schemagen" description="Generating schemas">
+		<echo message="生成xml约束..." />
+		<mkdir dir="${schemas.dir}" />
+	    <schemagen destdir="${schemas.dir}">
+		    <src path="${src.main.java.dir}" />
+			<exclude name="${src.main.java.dir}/Main.java" />
+			<classpath refid="classpathfull" />
+	    </schemagen>
+	</target>
+
+	<!-- xml约束生成java类 -->
+	<target name="xml-xjc" description="Compiling the schema">
+		<echo message="生成java类..."/>
+		<xjc schema="${src.main.res.dir}/jaxb/package_szry.xsd" destdir="${gen.src.dir}">
+	      	<produces dir="gen-src" includes="**/*.java" />
+	    </xjc>
+	</target>
+
+	<!-- 执行程序 -->
+	<target name="run" depends="compile" description="运行">
+		<java classname="*" fork="yes">
+			<classpath refid="classpath" />
+		</java>
+	</target>
+
+	<!-- 打包成jar -->
+	<target name="jar" depends="compile" description="make .jar file">
+		<tstamp>
+			<format property="datestamp" pattern="yyyy-MM-dd" />
+		</tstamp>
+		<jar destfile="${dist.dir}/jeaw.jar" basedir="${classes.dir}">
+			<include name="com/jeaw/commons/**/*.class" />
+			<manifest>
+				<section name="Shared">
+					<attribute name="Version" value="${project.version}" />
+					<attribute name="Date" value="${datestamp}" />
+				</section>
+
+				<section name="Copyright">
+					<attribute name="Copy" value="(C) ${ant.project.name} 2008" />
+				</section>
+			</manifest>
+		</jar>
+	</target>
+  <!-- 将源代码打成jar包的形式-->
+  <target name="jar-src">
+    <jar jarfile="${dist.dir}/jeaw-source.jar" basedir="${src.main.java.dir}">
+      <include name="com/jeaw/commons/application/**/*.java"/><!--只将java文件打包-->
+    </jar>
+  </target>
+	<!-- prepare war -->
+	<target name="war-prepare" depends="compile" description="prepare .war file">
+    <mkdir dir="${war.dest}" />
+    <copy todir="${war.dest}">
+      <fileset dir="${web.root}">
+        <exclude name="**/*.jar" />
+        <exclude name="**/*test.*" />
+        <exclude name="**/*Test.*" />
+        <exclude name="**/test/**/*.class" />
+      </fileset>
+    </copy>
+    <copy todir="${war.dest}/WEB-INF/lib" flatten="true">
+      <fileset dir="${lib.dir}">
+      	<include name="struts2/*.jar" />
+        <include name="jsp/*.jar" />
+        <include name="spring/*.jar" />
+        <include name="hibernate/*.jar" />
+        <include name="jpa/*.jar" />
+        <include name="aspectj/*.jar" />
+        <include name="commons/*.jar" />
+        <include name="cache/*.jar" />
+        <include name="security/*.jar" />
+        <include name="log/*.jar" />
+        <include name="ecside/*.jar" />
+        <include name="quartz/*.jar" />
+        <include name="xml/*.jar" />
+        <include name="json/*.jar" />
+        <include name="jta/*.jar" />
+        <include name="file/**/*.jar"/>
+        <include name="html/*.jar"/>
+        <include name="jodconverter/*.jar" />
+        <include name="gis/*.jar" />
+        <include name="mina/*.jar" />
+      	<include name="jcaptcha/*.jar" />
+      </fileset>
+    </copy>
+    <copy todir="${war.dest}/WEB-INF/lib" flatten="true">
+      <fileset dir="${dist.dir}">
+        <include name="jeaw.jar"/>
+      </fileset>
+    </copy>
+	</target>
+	<!-- 打包成war -->
+	<target name="war" depends="war-prepare" description="make .war file">
+		<war destfile="${war.file}" webxml="${war.dest}/WEB-INF/web.xml">
+			<fileset dir="${war.dest}">
+      </fileset>
+		</war>
+		<delete dir="${war.dest}" />
+	</target>
+
+	<!-- 打包成ear -->
+	<target name="ear" depends="compile" description="make .ear file">
+		<ear destfile="${ear.file}" appxml="application.xml">
+			<fileset dir="${basedir}" includes="*.war" />
+		</ear>
+	</target>
+
+	<!-- 输出api文档 -->
+	<target name="doc" description="create api doc">
+		<delete dir="${doc.dir}" />
+		<mkdir dir="${doc.dir}" />
+		<javadoc destdir="${doc.dir}" author="true" version="true" encoding="UTF-8" charset="UTF-8" docencoding="UTF-8">
+			<classpath refid="classpathfull" />
+			<packageset dir="${src.main.java.dir}" defaultexcludes="yes">
+				<!-- <include name="**/*.java" /> -->
+				<include name="com/jeaw/commons/**" />
+			</packageset>
+			<doctitle>
+				<![CDATA[<h1>API</h1>]]>
+			</doctitle>
+			<bottom>
+				<![CDATA[<i>All Rights Reserved.</i>]]>
+			</bottom>
+		</javadoc>
+	</target>
+
+	<!-- findbugs -->
+
+	<target name="findbugs-init" depends="findbugs-clean">
+		<mkdir dir="${findbugs.destdir}" />
+	</target>
+
+	<target name="findbugs-clean" description="清理所有Findbugs检查结果">
+		<echo>清理所有Findbugs检查结果!</echo>
+		<delete dir="${findbugs.destdir}" />
+	</target>
+	<target name="findbugs" depends="findbugs-init" description="用Findbugs检查代码错误.">
+		<echo>开始用Findbugs检查代码错误......</echo>
+		<findbugs home="${findbugs.home}" output="xml" outputFile="${findbugs.file}" jvmargs="-Xmx1024m">
+			<!--auxClasspath path="${basedir}/lib/Regex.jar" /-->
+			<sourcePath path="${findbugs.src}" />
+			<class location="${findbugs.class}" />
+		</findbugs>
+		<echo>Findbugs检查代码错误完成......</echo>
+	</target>
+
+	<target name="findbugs-html" description="将检查结果转换为Html.">
+		<echo>将Findbugs检查结果转换为Html......</echo>
+		<mkdir dir="${findbugs.desthtmldir}" />
+		<convertXmlToText home="${findbugs.home}" longBugCodes="true" input="${findbugs.file}" output="${findbugs.desthtmldir}/html_result.html"
+			format="html">
+		</convertXmlToText>
+		<!--
+			<xslt in="${findbugs.file}" out="${findbugs.desthtmldir}html_result.html"
+			style="build/default.xsl">
+			<classpath path="${findbugs.home}lib/*.jar"/>
+			</xslt>
+		-->
+	</target>
+
+	<!-- 分析结果 -->
+	<target name="findbugs-filterBugs">
+		<!--
+			<filterBugs home="${findbugs.home}" output="filterBugs.html" withmessages="true" >
+			<datafile name="${findbugs.file}"/>
+			</filterBugs>
+		-->
+		<convertXmlToText home="${findbugs.home}" input="${findbugs.file}" output="${findbugs.desthtmldir}/html_result2.html"
+			format="html:fancy.xsl">
+		</convertXmlToText>
+	</target>
+
+	<!-- checkstyle -->
+	<target name="checkstyle">
+		<mkdir dir="${checkstyle.home.dir}" />
+		<checkstyle config="${checkstyle.config}" failOnViolation="false" failureProperty="checkstyle.failure">
+			<formatter type="xml" tofile="${checkstyle.result}"/>
+			<fileset dir="${src.main.java.dir}" includes="**/*.java"/>
+		</checkstyle>
+		<!--生成报告,其格式取决于${checkstyle.report.style}-->
+		<xslt in="${checkstyle.result}" out="${checkstyle.report}" style="${checkstyle.report.style}"/>
+	</target>
+
+	<!-- pmd -->
+	<target name="pmd" description="Review code using PMD">
+		<mkdir dir="${pmd.home.dir}" />
+	    <pmd shortFilenames="true">
+			<!-- Determine the ruleset to be used -->
+			<ruleset>${pmd.rule.dir}/internal/all-java.xml</ruleset>
+			<!-- Generate and HTML report into the designated directory -->
+			<formatter type="html"
+				toFile="${pmd.home.dir}/pmd_automated_code_review_report.html" />
+			<!-- Files to be configured for review -->
+			<fileset dir="${src.main.java.dir}/">
+				<include name="**/*.java" />
+				<exclude name="**/*Test.java" />
+			</fileset>
+		</pmd>
+	</target>
+
+	<!-- 生成对象 -->
+	<target name="generate.pojo">
+		<hibernatetool destdir="${gen.src.dir}" classpath="classpath">
+			<configuration>
+				<fileset dir="${src.main.java.dir}">
+			    	<include name="**/UserMedal.hbm.xml"/>
+			    </fileset>
+			</configuration>
+			<hbm2java jdk5="true" ejb3="false" />
+		</hibernatetool>
+	</target>
+
+	<!-- 生成代码 -->
+	<target name="generate.code">
+		<hibernatetool destdir="${src.main.java.dir}" classpath="classpath">
+			<configuration>
+				<fileset dir="${src.main.java.dir}">
+			    	<include name="**/UserMedal.hbm.xml"/>
+			    </fileset>
+			</configuration>
+			<hbmtemplate templatepath="${templates.dir}/dao" template="interface.ftl" filepattern="{package-name}/../dao/{class-name}Dao.java" />
+			<hbmtemplate templatepath="${templates.dir}/dao" template="implements.ftl" filepattern="{package-name}/../dao/hibernate/{class-name}DaoImp.java" />
+			<hbmtemplate templatepath="${templates.dir}/service" template="interface.ftl" filepattern="{package-name}/../service/{class-name}Service.java" />
+			<hbmtemplate templatepath="${templates.dir}/service" template="implements.ftl" filepattern="{package-name}/../service/imp/{class-name}ServiceImp.java" />
+			<hbmtemplate templatepath="${templates.dir}/action" template="action.ftl" filepattern="{package-name}/../web/action/{class-name}Action.java" />
+		</hibernatetool>
+	</target>
+	
+</project>

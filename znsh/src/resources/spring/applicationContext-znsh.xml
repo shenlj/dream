@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
+  default-autowire="byName">
+  
+
+  <bean id="competitionPartyDao" class="com.mrs.sysmgr.dao.hibernate.CompetitionPartyDaoImp" />
+  <bean id="competitionPartyService" class="com.mrs.sysmgr.service.imp.CompetitionPartyServiceImp" />
+  
+
+  <bean id="daySleepDao" class="com.mrs.sysmgr.dao.hibernate.DaySleepDaoImp" />
+  <bean id="daySleepService" class="com.mrs.sysmgr.service.imp.DaySleepServiceImp" />
+  
+
+  <bean id="footTypeDao" class="com.mrs.sysmgr.dao.hibernate.FootTypeDaoImp" />
+  <bean id="footTypeService" class="com.mrs.sysmgr.service.imp.FootTypeServiceImp" />
+  
+
+  <bean id="friendsDao" class="com.mrs.sysmgr.dao.hibernate.FriendsDaoImp" />
+  <bean id="friendsService" class="com.mrs.sysmgr.service.imp.FriendsServiceImp" />
+  
+
+  <bean id="medalDao" class="com.mrs.sysmgr.dao.hibernate.MedalDaoImp" />
+  <bean id="medalService" class="com.mrs.sysmgr.service.imp.MedalServiceImp" />
+  
+
+  <bean id="stepDataDao" class="com.mrs.sysmgr.dao.hibernate.StepDataDaoImp" />
+  <bean id="stepDataService" class="com.mrs.sysmgr.service.imp.StepDataServiceImp" />
+  
+
+  <bean id="taskDao" class="com.mrs.sysmgr.dao.hibernate.TaskDaoImp" />
+  <bean id="taskService" class="com.mrs.sysmgr.service.imp.TaskServiceImp" />
+  
+
+  <bean id="userDataDao" class="com.mrs.sysmgr.dao.hibernate.UserDataDaoImp" />
+  <bean id="userDataService" class="com.mrs.sysmgr.service.imp.UserDataServiceImp" />
+  
+
+  <bean id="userMedalDao" class="com.mrs.sysmgr.dao.hibernate.UserMedalDaoImp" />
+  <bean id="userMedalService" class="com.mrs.sysmgr.service.imp.UserMedalServiceImp" />
+  
+
+  <bean id="singleStepDataDao" class="com.mrs.sysmgr.dao.hibernate.SingleStepDataDaoImp" />
+  <bean id="sensorDataService" class="com.mrs.sysmgr.service.imp.SensorDataServiceImp" />
+  
+  <bean id="userRequestDao" class="com.mrs.sysmgr.dao.hibernate.UserRequestDaoImp" />
+  <bean id="userRequestService" class="com.mrs.sysmgr.service.imp.UserRequestServiceImp" />
+  
+  <bean id="fileOperationService" class="com.wholetech.commons.file.FileOperationServiceImp" />
+  
+  <bean id="znshGlService" class="com.mrs.sysmgr.service.imp.ZnshGlServiceImp" />
+</beans>
