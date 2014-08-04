@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.wholetech.commons.service.BaseService;
 
-public interface WaiteListService  extends BaseService {
-	
-	public  List<Map> getWaiteList ();		
+public interface WaiteListService extends BaseService {
+
+	public List<Map> getWaiteList();
 }

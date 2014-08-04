@@ -14,68 +14,69 @@ import com.wholetech.commons.util.PropertyXmlMgr;
  */
 public class FileUtil {
 
-  private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
-  private static String rootPath = PropertyXmlMgr.getString("MRSCONFIG", "file.content.root.path");
+	private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
+	private static String rootPath = PropertyXmlMgr.getString("MRSCONFIG", "file.content.root.path");
 
-  public static FileServer connectServer() throws Exception {
+	public static FileServer connectServer() throws Exception {
 
-    try {
-      FileServer fileServer = new FileServer(rootPath);
-      return fileServer;
-    } catch (Exception e) {
-      logger.error("connect.server.error", e);
-      throw new Exception("connect.server.error");
-    }
-  }
+		try {
+			final FileServer fileServer = new FileServer(FileUtil.rootPath);
+			return fileServer;
+		} catch (final Exception e) {
+			FileUtil.logger.error("connect.server.error", e);
+			throw new Exception("connect.server.error");
+		}
+	}
 
-  public static void closeServer(FileServer fileServer) {
+	public static void closeServer(FileServer fileServer) {
 
-    try {
-      fileServer = null;
-    } catch (Exception e) {
-      logger.error("close.server.error", e);
-    }
-  }
+		try {
+			fileServer = null;
+		} catch (final Exception e) {
+			FileUtil.logger.error("close.server.error", e);
+		}
+	}
 
-  public static InputStream downFile(String sourceFileName, FileServer fileServer) throws Exception {
+	public static InputStream downFile(final String sourceFileName, final FileServer fileServer) throws Exception {
 
-    try {
-      return fileServer.downFile(sourceFileName);
-    } catch (Exception e) {
-      logger.error("down.file.error.info", sourceFileName, e);
-      throw new Exception("down.file.error");
-    }
-  }
+		try {
+			return fileServer.downFile(sourceFileName);
+		} catch (final Exception e) {
+			FileUtil.logger.error("down.file.error.info", sourceFileName, e);
+			throw new Exception("down.file.error");
+		}
+	}
 
-  public static InputStream downFile(String path, String sourceFileName, FileServer fileServer) throws Exception {
+	public static InputStream downFile(final String path, final String sourceFileName, final FileServer fileServer)
+			throws Exception {
 
-    try {
-      fileServer.changeDirectory(path);
-      return fileServer.downFile(sourceFileName);
-    } catch (Exception e) {
-      logger.error("down.file.error.info", sourceFileName, e);
-      throw new Exception("down.file.error");
-    }
-  }
+		try {
+			fileServer.changeDirectory(path);
+			return fileServer.downFile(sourceFileName);
+		} catch (final Exception e) {
+			FileUtil.logger.error("down.file.error.info", sourceFileName, e);
+			throw new Exception("down.file.error");
+		}
+	}
 
-  public static boolean uploadFile(InputStream iStream, String newName, FileServer fileServer) {
+	public static boolean uploadFile(final InputStream iStream, final String newName, final FileServer fileServer) {
 
-    try {
-      return fileServer.uploadFile(iStream, newName);
-    } catch (Exception e) {
-      logger.error("upload.file.error.info", newName, e);
-      return false;
-    }
-  }
+		try {
+			return fileServer.uploadFile(iStream, newName);
+		} catch (final Exception e) {
+			FileUtil.logger.error("upload.file.error.info", newName, e);
+			return false;
+		}
+	}
 
-  public static void main(String[] args) throws Exception {
+	public static void main(final String[] args) throws Exception {
 
-    FileServer fileServer = connectServer();
-    InputStream in = new FileInputStream(new File("D:/新建 文本文档 (2).txt"));
-    uploadFile(in, "dfdf/gggg.txt", fileServer);
-    System.out.print(in);
-    // InputStream in = downFile("df/dfdf.txt", fileServer);
+		final FileServer fileServer = FileUtil.connectServer();
+		final InputStream in = new FileInputStream(new File("D:/新建 文本文档 (2).txt"));
+		FileUtil.uploadFile(in, "dfdf/gggg.txt", fileServer);
+		System.out.print(in);
+		// InputStream in = downFile("df/dfdf.txt", fileServer);
 
-    System.out.print(in);
-  }
+		System.out.print(in);
+	}
 }

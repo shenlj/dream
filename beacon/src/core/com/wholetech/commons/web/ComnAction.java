@@ -30,7 +30,6 @@ import com.wholetech.commons.ssh.extend.DateConverter;
 
 /**
  * 简单封装Struts DispatchAction的基类. 提供一些基本的简化函数,将不断增强.
- * 
  */
 public class ComnAction extends ActionSupport {
 
@@ -39,7 +38,7 @@ public class ComnAction extends ActionSupport {
 	protected Logger logger = LoggerFactory.getLogger(getClass());
 
 	static {
-		registConverter();
+		ComnAction.registConverter();
 	}
 
 	/**
@@ -47,6 +46,7 @@ public class ComnAction extends ActionSupport {
 	 * 也可以在web.xml中设置struts的参数达到相同效果，在这里设置可以防止用户漏设web.xml.
 	 */
 	public static void registConverter() {
+
 		ConvertUtils.register(new IntegerConverter(null), Integer.class);
 		ConvertUtils.register(new FloatConverter(null), Float.class);
 		ConvertUtils.register(new DoubleConverter(null), Double.class);
@@ -57,183 +57,219 @@ public class ComnAction extends ActionSupport {
 
 	/**
 	 * 以属性文件方式保存Action-level消息
-	 * 
-	 * @param key  配置文件中要获取信息的key
-     * @param values 要保存的信息
+	 *
+	 * @param key
+	 *            配置文件中要获取信息的key
+	 * @param values
+	 *            要保存的信息
 	 */
-	protected void saveMessage(String key, String... values) {
+	protected void saveMessage(final String key, final String... values) {
+
 		addActionMessage(getText(key, values));
 	}
 
 	/**
 	 * 以文本方式保存Action-level消息
-	 * 
-	 * @param value 要保存的信息
+	 *
+	 * @param value
+	 *            要保存的信息
 	 */
-	protected void saveMessage(String value) {
+	protected void saveMessage(final String value) {
+
 		addActionMessage(value);
 	}
 
 	/**
 	 * 以属性文件方式保存Action-level错误消息
-	 * 
-	 * @param key  配置文件中要获取信息的key
-     * @param values 要保存的信息
+	 *
+	 * @param key
+	 *            配置文件中要获取信息的key
+	 * @param values
+	 *            要保存的信息
 	 */
-	protected void saveError(String key, String... values) {
+	protected void saveError(final String key, final String... values) {
+
 		addActionError(getText(key, values));
 	}
 
 	/**
 	 * 以文本方式保存Action-level错误消息
-	 * 
-	 * @param value 要保存的信息
+	 *
+	 * @param value
+	 *            要保存的信息
 	 */
-	protected void saveError(String value) {
+	protected void saveError(final String value) {
+
 		addActionError(value);
 	}
 
 	/**
 	 * 设置错误信息集合
-	 * 
-	 * @param errors  错误信息集合
+	 *
+	 * @param errors
+	 *            错误信息集合
 	 */
-	protected void saveError(List errors) {
+	protected void saveError(final List errors) {
+
 		setActionErrors(errors);
 	}
 
 	/**
 	 * 直接信息集合
-	 * 
-	 * @param messages  信息集合
+	 *
+	 * @param messages
+	 *            信息集合
 	 */
-	protected void saveMessage(List messages) {
+	protected void saveMessage(final List messages) {
+
 		setActionMessages(messages);
 	}
 
 	/**
 	 * 以字符串形式返回信息
-	 * 
-	 * @param text 所要输出的信息
+	 *
+	 * @param text
+	 *            所要输出的信息
 	 */
-	public void renderText(String text) {
-		renderToView("text/plain",text);
+	public void renderText(final String text) {
+
+		renderToView("text/plain", text);
 	}
 
 	/**
 	 * 以html形式返回信息
-	 * 
-	 * @param text 所要输出的信息
+	 *
+	 * @param text
+	 *            所要输出的信息
 	 */
-	public void renderHtml(String text) {
-		renderToView("text/html",text);
+	public void renderHtml(final String text) {
+
+		renderToView("text/html", text);
 	}
-	
+
 	/**
 	 * 以XML形式返回信息
-	 * 
-	 * @param text 所要输出的信息
+	 *
+	 * @param text
+	 *            所要输出的信息
 	 */
-	public void renderXML(String text) {
-		renderToView("text/xml",text);
+	public void renderXML(final String text) {
+
+		renderToView("text/xml", text);
 	}
-	
+
 	/**
 	 * 根据不同的类型（plain,html,xml等），返回页面信息
-	 * 
-	 * @param type 返回的类型
-	 * @param text 要返回的信息
+	 *
+	 * @param type
+	 *            返回的类型
+	 * @param text
+	 *            要返回的信息
 	 */
-	private void renderToView(String type,String text){
+	private void renderToView(final String type, final String text) {
+
 		try {
-			HttpServletResponse response = this.getResponse();
-			response.setContentType(type+";charset=UTF-8");
+			final HttpServletResponse response = getResponse();
+			response.setContentType(type + ";charset=UTF-8");
 			response.getWriter().write(text);
-		} catch (IOException e) {
-			logger.error("向Response输出{}时出错" + text);
+		} catch (final IOException e) {
+			this.logger.error("向Response输出{}时出错" + text);
 		}
 	}
 
 	/**
 	 * 输出json结果类型。
-	 * 
 	 * eg.
+	 * 
 	 * <pre>
-	 * Object[] results = new Object[]{"name","xiaohu","age", 66, "sex", "女"};
+	 * Object[] results = new Object[] { &quot;name&quot;, &quot;xiaohu&quot;, &quot;age&quot;, 66, &quot;sex&quot;, &quot;女&quot; };
 	 * this.renderJson(true, results);
 	 * </pre>
+	 * 
 	 * 通过上述代码，输出到response中的json串是{"success":true, "name":"xiaohu", "age": 66, "sex":"女"}
-	 * 
-	 * 
-	 * @param success boolean类型，是否成功的标志。
-	 * @param appdx 其他一些附加信息，是一个对象数组，约定为两两一组的键值。比如["propa","propa value","propb", "propb value"].
+	 *
+	 * @param success
+	 *            boolean类型，是否成功的标志。
+	 * @param appdx
+	 *            其他一些附加信息，是一个对象数组，约定为两两一组的键值。比如["propa","propa value","propb", "propb value"].
 	 */
-	protected void renderJson(boolean success, Object[] appdx) {
-		JSONObject jsonObj = new JSONObject();
-		
+	protected void renderJson(final boolean success, final Object[] appdx) {
+
+		final JSONObject jsonObj = new JSONObject();
+
 		jsonObj.accumulate("success", success);
-		
+
 		int i = 0;
 		while (i < appdx.length) {
-			jsonObj.accumulate(appdx[i].toString(), appdx[i+1]);
+			jsonObj.accumulate(appdx[i].toString(), appdx[i + 1]);
 			i += 2;
 		}
-		this.renderText(jsonObj.toString());
+		renderText(jsonObj.toString());
 	}
-	
+
 	/**
 	 * 输出json结果类型。
-	 * eg.
-	 * <li> this.renderJson(true); 对应输出json串为：{"success": true}</li>
-	 * <li> this.renderJson(false, "something error"); 对应输出json串为：{"success":false, "msg":"something error"}</li>
-	 * 
-	 * @param success boolean类型，是否成功的标志。
-	 * @param msg 消息类型
+	 * eg. <li>this.renderJson(true); 对应输出json串为：{"success": true}</li> <li>this.renderJson(false, "something error");
+	 * 对应输出json串为：{"success":false, "msg":"something error"}</li>
+	 *
+	 * @param success
+	 *            boolean类型，是否成功的标志。
+	 * @param msg
+	 *            消息类型
 	 */
-	protected void renderJson(boolean success, String... msg) {
+	protected void renderJson(final boolean success, final String... msg) {
+
 		Object[] appdx = null;
 		if (msg != null && msg.length > 0) {
-			appdx = new String[]{"msg", msg[0]};
+			appdx = new String[] { "msg", msg[0] };
 		} else {
-			appdx = new String[]{};
+			appdx = new String[] {};
 		}
-		
+
 		renderJson(success, appdx);
 	}
-	
-	protected void renderJson(JSON json) {
-		this.renderToView("text/json", json.toString());
+
+	protected void renderJson(final JSON json) {
+
+		renderToView("text/json", json.toString());
 	}
 
 	protected HttpServletRequest getRequest() {
+
 		return ServletActionContext.getRequest();
 	}
 
 	protected HttpServletResponse getResponse() {
+
 		return ServletActionContext.getResponse();
 	}
-	
+
 	protected ValueStack getValueStatck() {
-	    return ActionContext.getContext().getValueStack(); 
+
+		return ActionContext.getContext().getValueStack();
 	}
 
 	protected HttpSession getSession() {
+
 		return ServletActionContext.getRequest().getSession();
 	}
 
 	protected ServletContext getServletContext() {
+
 		return ServletActionContext.getServletContext();
 	}
-	
-	protected String getParameter(String param) {
+
+	protected String getParameter(final String param) {
+
 		return getRequest().getParameter(param);
 	}
 
-	public Object getBean(String beanName) {
+	public Object getBean(final String beanName) {
+
 		Object bean = null;
 		bean = WebApplicationContextUtils.getRequiredWebApplicationContext(
 				getServletContext()).getBean(beanName);
 		return bean;
 	}
-	
+
 }

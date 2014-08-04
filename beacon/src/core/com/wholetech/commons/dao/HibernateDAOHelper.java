@@ -28,118 +28,113 @@ import com.wholetech.commons.util.CriterionUtil;
 
 public class HibernateDAOHelper {
 
-  protected Logger logger = LoggerFactory.getLogger(HibernateDAOHelper.class);
-  protected static CriterionUtil criterionUtil = new CriterionUtil();
+	protected Logger logger = LoggerFactory.getLogger(HibernateDAOHelper.class);
+	protected static CriterionUtil criterionUtil = new CriterionUtil();
 
-  public int countCriteriaResult(Criteria c) {
+	public int countCriteriaResult(final Criteria c) {
 
-    CriteriaImpl impl = (CriteriaImpl) c;
+		final CriteriaImpl impl = (CriteriaImpl) c;
 
-    Projection projection = impl.getProjection();
-    ResultTransformer transformer = impl.getResultTransformer();
+		final Projection projection = impl.getProjection();
+		final ResultTransformer transformer = impl.getResultTransformer();
 
-    List orderEntries = null;
-    try {
-      orderEntries = (List) BeanUtil.getDeclaredProperty(impl, "orderEntries");
-      BeanUtil.setDeclaredProperty(impl, "orderEntries", new ArrayList());
-    } catch (Exception e) {
-      this.logger.error("不可能抛出的异常:{}", e.getMessage());
-    }
+		List orderEntries = null;
+		try {
+			orderEntries = (List) BeanUtil.getDeclaredProperty(impl, "orderEntries");
+			BeanUtil.setDeclaredProperty(impl, "orderEntries", new ArrayList());
+		} catch (final Exception e) {
+			logger.error("不可能抛出的异常:{}", e.getMessage());
+		}
 
-    int totalCount = ((Integer) c.setProjection(Projections.rowCount()).uniqueResult()).intValue();
+		final int totalCount = ((Integer) c.setProjection(Projections.rowCount()).uniqueResult()).intValue();
 
-    c.setProjection(projection);
+		c.setProjection(projection);
 
-    if (projection == null) {
-      c.setResultTransformer(CriteriaSpecification.ROOT_ENTITY);
-    }
+		if (projection == null) {
+			c.setResultTransformer(CriteriaSpecification.ROOT_ENTITY);
+		}
 
-    if (transformer != null) {
-      c.setResultTransformer(transformer);
-    }
-    try {
-      BeanUtil.setDeclaredProperty(impl, "orderEntries", orderEntries);
-    } catch (Exception e) {
-      this.logger.error("不可能抛出的异常:{}", e.getMessage());
-    }
+		if (transformer != null) {
+			c.setResultTransformer(transformer);
+		}
+		try {
+			BeanUtil.setDeclaredProperty(impl, "orderEntries", orderEntries);
+		} catch (final Exception e) {
+			logger.error("不可能抛出的异常:{}", e.getMessage());
+		}
 
-    return totalCount;
-  }
+		return totalCount;
+	}
 
-  public Criteria setPageParameter(Criteria c, Page<?> page) {
+	public Criteria setPageParameter(final Criteria c, final Page<?> page) {
 
-    c.setFirstResult(page.getIdisplayStart());
-    c.setMaxResults(page.getIdisplayLength());
-    return c;
-  }
+		c.setFirstResult(page.getIdisplayStart());
+		c.setMaxResults(page.getIdisplayLength());
+		return c;
+	}
 
-  public int countResult(Query query, Object[] values) {
+	public int countResult(final Query query, final Object[] values) {
 
-    try {
-      return Integer.parseInt(String.valueOf(getQuery(query, values).uniqueResult()));
-    } catch (Exception e) {
-      throw new RuntimeException("Query can't be auto count, queryString is:" + query.getQueryString(), e);
-    }
-  }
+		try {
+			return Integer.parseInt(String.valueOf(getQuery(query, values).uniqueResult()));
+		} catch (final Exception e) {
+			throw new RuntimeException("Query can't be auto count, queryString is:" + query.getQueryString(), e);
+		}
+	}
 
-  public String buildCountQueryString(String sqlOrHql) {
+	public String buildCountQueryString(final String sqlOrHql) {
 
-    String prefix = "";
+		String prefix = "";
 
-    int fromIndex = StringUtils.indexOfIgnoreCase(sqlOrHql, "from");
-    int orderIndex = StringUtils.lastIndexOfIgnoreCase(sqlOrHql, "order by");
-    if (StringUtils.isNotEmpty(sqlOrHql) && sqlOrHql.toUpperCase().trim().startsWith("SELECT")) {
-      prefix = sqlOrHql.substring(StringUtils.indexOfIgnoreCase(sqlOrHql, "select") + 6, fromIndex);
-    }
+		final int fromIndex = StringUtils.indexOfIgnoreCase(sqlOrHql, "from");
+		final int orderIndex = StringUtils.lastIndexOfIgnoreCase(sqlOrHql, "order by");
+		if (StringUtils.isNotEmpty(sqlOrHql) && sqlOrHql.toUpperCase().trim().startsWith("SELECT")) {
+			prefix = sqlOrHql.substring(StringUtils.indexOfIgnoreCase(sqlOrHql, "select") + 6, fromIndex);
+		}
 
-    if (orderIndex == -1) {
-      if (StringUtils.indexOfIgnoreCase(prefix, "distinct") != -1) {
-        return "SELECT COUNT(" + prefix + ") " + StringUtils.substring(sqlOrHql, fromIndex);
-      }
+		if (orderIndex == -1) {
+			if (StringUtils.indexOfIgnoreCase(prefix, "distinct") != -1) {
+				return "SELECT COUNT(" + prefix + ") " + StringUtils.substring(sqlOrHql, fromIndex);
+			}
 
-      return "SELECT COUNT(*) as CT " + StringUtils.substring(sqlOrHql, fromIndex);
-    }
-    if (StringUtils.indexOfIgnoreCase(prefix, "distinct") != -1) {
-      return "SELECT COUNT(" + prefix + ") " + StringUtils.substring(sqlOrHql, fromIndex, orderIndex);
-    }
+			return "SELECT COUNT(*) as CT " + StringUtils.substring(sqlOrHql, fromIndex);
+		}
+		if (StringUtils.indexOfIgnoreCase(prefix, "distinct") != -1) {
+			return "SELECT COUNT(" + prefix + ") " + StringUtils.substring(sqlOrHql, fromIndex, orderIndex);
+		}
 
-    return "SELECT COUNT(*) as CT " + StringUtils.substring(sqlOrHql, fromIndex, orderIndex);
-  }
+		return "SELECT COUNT(*) as CT " + StringUtils.substring(sqlOrHql, fromIndex, orderIndex);
+	}
 
-  protected String getCountSql(String originalHql, SessionFactory sessionFactory) {
+	protected String getCountSql(final String originalHql, final SessionFactory sessionFactory) {
 
-    QueryTranslatorImpl queryTranslator = new QueryTranslatorImpl(originalHql, originalHql,
-        Collections.EMPTY_MAP, (SessionFactoryImplementor) sessionFactory);
+		final QueryTranslatorImpl queryTranslator = new QueryTranslatorImpl(originalHql, originalHql,
+				Collections.EMPTY_MAP, (SessionFactoryImplementor) sessionFactory);
 
-    queryTranslator.compile(Collections.EMPTY_MAP, false);
+		queryTranslator.compile(Collections.EMPTY_MAP, false);
 
-    return "select count(*) from (" + queryTranslator.getSQLString() + ") tmp_count_t";
-  }
+		return "select count(*) from (" + queryTranslator.getSQLString() + ") tmp_count_t";
+	}
 
-  public Query getQuery(Query query, Object[] values) {
+	public Query getQuery(final Query query, final Object[] values) {
 
-    if (values != null && values.length > 0) {
-      for (int i = 0; i < values.length; ++i) {
-        query.setParameter(i, values[i]);
-      }
-    }
+		if (values != null && values.length > 0) {
+			for (int i = 0; i < values.length; ++i) {
+				query.setParameter(i, values[i]);
+			}
+		}
 
-    return query;
-  }
+		return query;
+	}
 
-  private boolean isComplexProperty(String prop) {
+	public static void checkWriteOperationAllowed(final HibernateTemplate template, final Session session)
+			throws InvalidDataAccessApiUsageException {
 
-    return prop.indexOf(".") != -1;
-  }
-
-  public static void checkWriteOperationAllowed(HibernateTemplate template, Session session)
-      throws InvalidDataAccessApiUsageException {
-
-    if (template.isCheckWriteOperations() && template.getFlushMode() != 2 &&
-        session.getFlushMode().lessThan(FlushMode.COMMIT)) {
-      throw new InvalidDataAccessApiUsageException(
-          "Write operations are not allowed in read-only mode (FlushMode.NEVER/MANUAL): Turn your Session into FlushMode.COMMIT/AUTO or remove 'readOnly' marker from transaction definition.");
-    }
-  }
+		if (template.isCheckWriteOperations() && template.getFlushMode() != 2 &&
+				session.getFlushMode().lessThan(FlushMode.COMMIT)) {
+			throw new InvalidDataAccessApiUsageException(
+					"Write operations are not allowed in read-only mode (FlushMode.NEVER/MANUAL): Turn your Session into FlushMode.COMMIT/AUTO or remove 'readOnly' marker from transaction definition.");
+		}
+	}
 
 }

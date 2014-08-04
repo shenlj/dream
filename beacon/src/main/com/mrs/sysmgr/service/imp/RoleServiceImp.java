@@ -8,29 +8,31 @@ import com.wholetech.commons.query.Page;
 import com.wholetech.commons.service.BaseServiceImp;
 
 public class RoleServiceImp extends BaseServiceImp<Role> implements RoleService {
-	
-	private RoleDao roleDao; 
-	
+
+	private RoleDao roleDao;
+
 	@Override
 	protected BaseDao getBaseDao() {
+
 		// TODO Auto-generated method stub
-		return this.roleDao;
+		return roleDao;
 	}
-	
-	public void setRoleDao(RoleDao roleDao) {
+
+	public void setRoleDao(final RoleDao roleDao) {
+
 		this.roleDao = roleDao;
 	}
 
+	@Override
+	public void saveRole(final Role role) {
 
-	 public void saveRole(Role role) {
-
-		this.roleDao.saveOrUpdate(role);
+		roleDao.saveOrUpdate(role);
 	}
 
+	@Override
+	public Page<Role> getRolePage(final Page<Role> page) {
 
-	public Page<Role> getRolePage(Page<Role> page){
-		
-		 return  (Page<Role>)this.roleDao.findPageByHql(page, "hql_sys_getRolePage");		
+		return (Page<Role>) roleDao.findPageByHql(page, "hql_sys_getRolePage");
 	}
 
 }

@@ -5,5 +5,5 @@ import com.mrs.sysmgr.entity.User;
 import com.wholetech.commons.dao.BaseDaoImp;
 
 public class UserDaoImp extends BaseDaoImp<User> implements UserDao {
-	
+
 }

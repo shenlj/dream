@@ -22,89 +22,72 @@ import com.wholetech.commons.Constants;
 public class UserLoginedFilter extends HttpServlet implements Filter {
 
 	protected Logger logger = LoggerFactory.getLogger(getClass());
-	
-	private FilterConfig filterConfig;
 
-    private FilterChain chain;
+	private FilterChain chain;
 
-    private HttpServletRequest request;
+	private HttpServletRequest request;
 
-    private HttpServletResponse response;
+	private HttpServletResponse response;
 
-    public void init(FilterConfig filterConfig) throws ServletException {
+	@Override
+	public void init(final FilterConfig filterConfig) throws ServletException {
 
-        this.filterConfig = filterConfig;
-    }
+	}
 
-    public void destroy() {
+	@Override
+	public void destroy() {
 
-        this.filterConfig = null;
-    }
+	}
 
-    @Override
-    public void doFilter(ServletRequest servletRequest,ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
+	@Override
+	public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
+			final FilterChain chain) throws IOException, ServletException {
 
-    	this.request = (HttpServletRequest) servletRequest;
-        this.response = ((HttpServletResponse) servletResponse);
-        String URI = request.getRequestURI();
-        this.logger.debug("request URI====" + URI);
-        String page = URI.substring(URI.lastIndexOf("/") + 1);
-        
-        try {
-        	HttpSession session = request.getSession();
-            // 获取网站访问根目录
-            String accessPath = request.getContextPath();
-            User user = (User) session
-                    .getAttribute(Constants.USER_IN_SESSION);
-            if (isExcludePage(page)) {// 不需要判断权限的请求如登录页面，则跳过
-                chain.doFilter(request, response);
-            }
-            else if (user == null) {// 没有登录
-                response.sendRedirect(accessPath + "/index.jsp");// 返回登陆页面（未登录或超时）
-            }
-            else {
-                // 判断当前user是否拥有访问此url的权限
-                //verifyUrl(url, st);
-            }
-        }
-        catch (Exception sx) {
-            sx.printStackTrace();
-        }
-    }
-    
-    private final String[] excludeUrl = { "login.jsp", "noright.jsp" };
+		request = (HttpServletRequest) servletRequest;
+		response = ((HttpServletResponse) servletResponse);
+		final String URI = this.request.getRequestURI();
+		logger.debug("request URI====" + URI);
+		final String page = URI.substring(URI.lastIndexOf("/") + 1);
 
-    protected boolean isExcludePage(String url) {
+		try {
+			final HttpSession session = this.request.getSession();
+			// 获取网站访问根目录
+			final String accessPath = this.request.getContextPath();
+			final User user = (User) session
+					.getAttribute(Constants.USER_IN_SESSION);
+			if (isExcludePage(page)) {// 不需要判断权限的请求如登录页面，则跳过
+				chain.doFilter(this.request, this.response);
+			}
+			else if (user == null) {// 没有登录
+				this.response.sendRedirect(accessPath + "/index.jsp");// 返回登陆页面（未登录或超时）
+			}
+			else {
+				// 判断当前user是否拥有访问此url的权限
+				// verifyUrl(url, st);
+			}
+		} catch (final Exception sx) {
+			sx.printStackTrace();
+		}
+	}
 
-        for (String ex : excludeUrl) {
-            if (ex.indexOf(url) >= 0) {
-                return true;
-            }
-        }
-        return false;
-    }
+	private final String[] excludeUrl = { "login.jsp", "noright.jsp" };
 
-    protected boolean noFileUrl(String url, HttpServletRequest request) {
+	protected boolean isExcludePage(final String url) {
 
-        String exclude = "login.jsp";
-        if (exclude.indexOf(url) >= 0) {
-            return true;
-        }
-        return false;
-    }
+		for (final String ex : this.excludeUrl) {
+			if (ex.indexOf(url) >= 0) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    private void verifyUrl(String url, User st) throws IOException,
-            ServletException {
+	protected boolean noFileUrl(final String url, final HttpServletRequest request) {
 
-        // 获取user拥有的所有资源串,挨个验证
-        String surl = "app/sys/user/role.jsp";
-
-        if (url.indexOf(surl) >= 0) {
-            chain.doFilter(request, response);
-        }
-        else {
-            String noPerJsp = "xxxnoPer.jsp";
-            response.sendRedirect("xxxnoPer.jsp");
-        }
-    }
+		final String exclude = "login.jsp";
+		if (exclude.indexOf(url) >= 0) {
+			return true;
+		}
+		return false;
+	}
 }

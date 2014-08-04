@@ -22,282 +22,306 @@ import com.wholetech.commons.util.GenericsUtil;
 /**
  * Hibernate Entity Dao基类。
  * 本实现中的所有方法都是针对泛型T的。
- * 
+ *
  * @see {@link CommonDaoImp}
  */
 abstract public class BaseDaoImp<T> extends CommonDaoImp implements BaseDao<T> {
 
-  private static final String BATCHTYPE_SAVE = "save";
-  private static final String BATCHTYPE_UPDATE = "update";
-  private static final String BATCHTYPE_MERGE = "merge";
-  private static final String BATCHTYPE_REMOVE = "remove";
-  private static final String BATCHTYPE_SAVEORUPDATE = "saveOrUpdate";
+	private static final String BATCHTYPE_SAVE = "save";
+	private static final String BATCHTYPE_UPDATE = "update";
+	private static final String BATCHTYPE_MERGE = "merge";
+	private static final String BATCHTYPE_REMOVE = "remove";
+	private static final String BATCHTYPE_SAVEORUPDATE = "saveOrUpdate";
 
-  /** Dao所管理的Entity类型. */
-  protected Class<T> entityClass;
+	/** Dao所管理的Entity类型. */
+	protected Class<T> entityClass;
 
-  protected Class<T> getEntityClass() {
+	protected Class<T> getEntityClass() {
 
-    return this.entityClass;
-  }
+		return this.entityClass;
+	}
 
-  @SuppressWarnings("unchecked")
-  public BaseDaoImp() {
+	@SuppressWarnings("unchecked")
+	public BaseDaoImp() {
 
-    this.entityClass = GenericsUtil.getGenericClass(getClass());
-  }
+		this.entityClass = GenericsUtil.getGenericClass(getClass());
+	}
 
-  @SuppressWarnings("unchecked")
-  public T get(Serializable id) {
+	@Override
+	@SuppressWarnings("unchecked")
+	public T get(final Serializable id) {
 
-    return getHibernateTemplate().get(getEntityClass(), id);
-  }
+		return getHibernateTemplate().get(getEntityClass(), id);
+	}
 
-  public T getClone(Serializable id) {
+	@Override
+	public T getClone(final Serializable id) {
 
-    T o = get(id);
-    getHibernateTemplate().evict(o);
-    return o;
-  }
+		final T o = get(id);
+		getHibernateTemplate().evict(o);
+		return o;
+	}
 
-  @SuppressWarnings("unchecked")
-  public List<T> getAll() {
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<T> getAll() {
 
-    this.logger.debug("获取所有{}实体", this.getEntityClass().getName());
-    return getHibernateTemplate().loadAll(getEntityClass());
-  }
+		logger.debug("获取所有{}实体", this.getEntityClass().getName());
+		return getHibernateTemplate().loadAll(getEntityClass());
+	}
 
-  public Serializable create(T pojo) {
+	@Override
+	public Serializable create(final T pojo) {
 
-    getHibernateTemplate().save(pojo);
-    return getIdentifier(pojo);
-  }
+		getHibernateTemplate().save(pojo);
+		return getIdentifier(pojo);
+	}
 
-  public Serializable saveOrUpdate(T pojo) {
+	@Override
+	public Serializable saveOrUpdate(final T pojo) {
 
-    this.logger.debug("创建或更新实体{}", pojo.getClass().getName());
-    getHibernateTemplate().saveOrUpdate(pojo);
-    return getIdentifier(pojo);
-  }
+		logger.debug("创建或更新实体{}", pojo.getClass().getName());
+		getHibernateTemplate().saveOrUpdate(pojo);
+		return getIdentifier(pojo);
+	}
 
-  public void update(T pojo) {
+	@Override
+	public void update(final T pojo) {
 
-    getHibernateTemplate().update(pojo);
-  }
+		getHibernateTemplate().update(pojo);
+	}
 
-  public void remove(T pojo) {
+	@Override
+	public void remove(final T pojo) {
 
 		getHibernateTemplate().delete(pojo);
-  }
+	}
 
-  @SuppressWarnings("unchecked")
-  public void batchUpdate(Collection detachedInstances) {
+	@Override
+	@SuppressWarnings("unchecked")
+	public void batchUpdate(final Collection detachedInstances) {
 
-    this.executeBatch(detachedInstances, BATCHTYPE_UPDATE);
-  }
+		this.executeBatch(detachedInstances, BaseDaoImp.BATCHTYPE_UPDATE);
+	}
 
-  @SuppressWarnings("unchecked")
-  public void batchSave(Collection transientInstances) {
+	@Override
+	@SuppressWarnings("unchecked")
+	public void batchSave(final Collection transientInstances) {
 
-    this.executeBatch(transientInstances, BATCHTYPE_SAVE);
-  }
+		this.executeBatch(transientInstances, BaseDaoImp.BATCHTYPE_SAVE);
+	}
 
-  @SuppressWarnings("unchecked")
-  public void batchMerge(Collection detachedInstances) {
+	@Override
+	@SuppressWarnings("unchecked")
+	public void batchMerge(final Collection detachedInstances) {
 
-    this.executeBatch(detachedInstances, BATCHTYPE_MERGE);
-  }
+		this.executeBatch(detachedInstances, BaseDaoImp.BATCHTYPE_MERGE);
+	}
 
-  @SuppressWarnings("unchecked")
-  public void batchSaveOrUpdate(Collection instances) {
+	@Override
+	@SuppressWarnings("unchecked")
+	public void batchSaveOrUpdate(final Collection instances) {
 
-    this.executeBatch(instances, BATCHTYPE_SAVEORUPDATE);
-  }
+		this.executeBatch(instances, BaseDaoImp.BATCHTYPE_SAVEORUPDATE);
+	}
 
-  @SuppressWarnings("unchecked")
-  public void batchRemove(Collection persistentInstances) {
+	@Override
+	@SuppressWarnings("unchecked")
+	public void batchRemove(final Collection persistentInstances) {
 
-    this.executeBatch(persistentInstances, BATCHTYPE_REMOVE);
-  }
+		this.executeBatch(persistentInstances, BaseDaoImp.BATCHTYPE_REMOVE);
+	}
 
-  private void executeBatch(final Collection instances, final String batchType) {
+	private void executeBatch(final Collection instances, final String batchType) {
 
-    getHibernateTemplate().execute(new HibernateCallback() {
+		getHibernateTemplate().execute(new HibernateCallback() {
 
-      public Object doInHibernate(Session session)
-          throws HibernateException {
+			@Override
+			public Object doInHibernate(final Session session)
+					throws HibernateException {
 
-        HibernateDAOHelper.checkWriteOperationAllowed(
-            getHibernateTemplate(), session);
-        if (!instances.isEmpty()) {
-          int max = instances.size();
-          // int i = 0;
-          for (Object pojo : instances) {
-            if (BATCHTYPE_SAVE.equals(batchType)) {
-              session.save(pojo);
-            } else if (BATCHTYPE_UPDATE.equals(batchType)) {
-              session.update(pojo);
-            } else if (BATCHTYPE_MERGE.equals(batchType)) {
-              session.merge(pojo);
-            } else if (BATCHTYPE_SAVEORUPDATE.equals(batchType)) {
-              session.saveOrUpdate(pojo);
-            } else if (BATCHTYPE_REMOVE.equals(batchType)) {
-              session.refresh(pojo);
-              session.delete(pojo);
-            }
+				HibernateDAOHelper.checkWriteOperationAllowed(
+						getHibernateTemplate(), session);
+				if (!instances.isEmpty()) {
+					instances.size();
+					// int i = 0;
+					for (final Object pojo : instances) {
+						if (BaseDaoImp.BATCHTYPE_SAVE.equals(batchType)) {
+							session.save(pojo);
+						} else if (BaseDaoImp.BATCHTYPE_UPDATE.equals(batchType)) {
+							session.update(pojo);
+						} else if (BaseDaoImp.BATCHTYPE_MERGE.equals(batchType)) {
+							session.merge(pojo);
+						} else if (BaseDaoImp.BATCHTYPE_SAVEORUPDATE.equals(batchType)) {
+							session.saveOrUpdate(pojo);
+						} else if (BaseDaoImp.BATCHTYPE_REMOVE.equals(batchType)) {
+							session.refresh(pojo);
+							session.delete(pojo);
+						}
 
-            session.flush();
-          }
-        }
-        return null;
-      }
-    });
-  }
+						session.flush();
+					}
+				}
+				return null;
+			}
+		});
+	}
 
-  @SuppressWarnings("unchecked")
-  public T findUnique(final String name, final Object value) {
+	@Override
+	@SuppressWarnings("unchecked")
+	public T findUnique(final String name, final Object value) {
 
-    this.logger.debug("查询属性{},值{}.", name, value);
-    try {
-      return (T) getHibernateTemplate().execute(
-          new HibernateCallback() {
+		logger.debug("查询属性{},值{}.", name, value);
+		try {
+			return (T) getHibernateTemplate().execute(
+					new HibernateCallback() {
 
-            public Object doInHibernate(Session session)
-                throws HibernateException {
+						@Override
+						public Object doInHibernate(final Session session)
+								throws HibernateException {
 
-              Criteria criteria = session
-                  .createCriteria(getEntityClass());
-              criteria.add(Restrictions.eq(name, value));
-              return criteria.uniqueResult();
-            }
-          });
-    } catch (HibernateException e) {
-      throw new NotUniqueException(name + "=" + value);
-    }
-  }
+							final Criteria criteria = session
+									.createCriteria(getEntityClass());
+							criteria.add(Restrictions.eq(name, value));
+							return criteria.uniqueResult();
+						}
+					});
+		} catch (final HibernateException e) {
+			throw new NotUniqueException(name + "=" + value);
+		}
+	}
 
-  @SuppressWarnings("unchecked")
-  public List<T> findList(final String name, final Object value) {
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<T> findList(final String name, final Object value) {
 
-    this.logger.debug("查询属性{},值{}.", name, value);
-    return getHibernateTemplate().executeFind(new HibernateCallback() {
+		logger.debug("查询属性{},值{}.", name, value);
+		return getHibernateTemplate().executeFind(new HibernateCallback() {
 
-      public Object doInHibernate(Session session)
-          throws HibernateException {
+			@Override
+			public Object doInHibernate(final Session session)
+					throws HibernateException {
 
-        Criteria criteria = session.createCriteria(getEntityClass());
-        criteria.add(Restrictions.eq(name, value));
-        return criteria.list();
-      }
-    });
-  }
+				final Criteria criteria = session.createCriteria(getEntityClass());
+				criteria.add(Restrictions.eq(name, value));
+				return criteria.list();
+			}
+		});
+	}
 
-  @SuppressWarnings("unchecked")
-  public List<T> findList(final Map<String, Object> filter) {
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<T> findList(final Map<String, Object> filter) {
 
-    return getHibernateTemplate().executeFind(new HibernateCallback() {
+		return getHibernateTemplate().executeFind(new HibernateCallback() {
 
-      public Object doInHibernate(Session session)
-          throws HibernateException {
+			@Override
+			public Object doInHibernate(final Session session)
+					throws HibernateException {
 
-        Criteria criteria = session.createCriteria(getEntityClass());
-        for (Map.Entry<String, Object> entry : filter.entrySet()) {
-          criteria.add(Restrictions.eq(entry.getKey(), entry
-              .getValue()));
-        }
-        return criteria.list();
-      }
-    });
-  }
+				final Criteria criteria = session.createCriteria(getEntityClass());
+				for (final Map.Entry<String, Object> entry : filter.entrySet()) {
+					criteria.add(Restrictions.eq(entry.getKey(), entry
+							.getValue()));
+				}
+				return criteria.list();
+			}
+		});
+	}
 
-  @SuppressWarnings("unchecked")
-  public List<T> findList(final Map<String, ?> filterMap,
-      final FilterSetter filterSetter) {
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<T> findList(final Map<String, ?> filterMap,
+			final FilterSetter filterSetter) {
 
-    return getHibernateTemplate().executeFind(new HibernateCallback() {
+		return getHibernateTemplate().executeFind(new HibernateCallback() {
 
-      public Object doInHibernate(Session session)
-          throws HibernateException {
+			@Override
+			public Object doInHibernate(final Session session)
+					throws HibernateException {
 
-        Criteria criteria = session.createCriteria(getEntityClass());
-        filterSetter.setUpCriteria(criteria, filterMap);
-        return criteria.list();
-      }
-    });
-  }
+				final Criteria criteria = session.createCriteria(getEntityClass());
+				filterSetter.setUpCriteria(criteria, filterMap);
+				return criteria.list();
+			}
+		});
+	}
 
-  @SuppressWarnings("unchecked")
-  public Page<T> findPage(final Page<T> page, final Map<String, ?> filterMap,
-      final FilterSetter filterSetter) {
+	@Override
+	@SuppressWarnings("unchecked")
+	public Page<T> findPage(final Page<T> page, final Map<String, ?> filterMap,
+			final FilterSetter filterSetter) {
 
-    getHibernateTemplate().execute(new HibernateCallback() {
+		getHibernateTemplate().execute(new HibernateCallback() {
 
-      public Object doInHibernate(Session session)
-          throws HibernateException {
+			@Override
+			public Object doInHibernate(final Session session)
+					throws HibernateException {
 
-        Criteria criteria = session.createCriteria(getEntityClass());
-        if (filterSetter != null) {
-          filterSetter.setUpCriteria(criteria, filterMap);
-        } else {
-          for (Map.Entry<String, ?> entry : filterMap.entrySet()) {
-            criteria.add(Restrictions.eq(entry.getKey(), entry
-                .getValue()));
-          }
-        }
-        return getPage(page, criteria);
-      }
-    });
-    return page;
-  }
+				final Criteria criteria = session.createCriteria(getEntityClass());
+				if (filterSetter != null) {
+					filterSetter.setUpCriteria(criteria, filterMap);
+				} else {
+					for (final Map.Entry<String, ?> entry : filterMap.entrySet()) {
+						criteria.add(Restrictions.eq(entry.getKey(), entry
+								.getValue()));
+					}
+				}
+				return getPage(page, criteria);
+			}
+		});
+		return page;
+	}
 
-  public Page<T> findPage(final Page<T> page, final Map<String, ?> filterMap) {
+	@Override
+	public Page<T> findPage(final Page<T> page, final Map<String, ?> filterMap) {
 
-    return this.findPage(page, filterMap, null);
-  }
+		return this.findPage(page, filterMap, null);
+	}
 
-  /**
-   * 描述：获取身份标识
-   * 
-   * @param
-   * @return Serializable
-   */
-  private Serializable getIdentifier(T pojo) {
+	/**
+	 * 描述：获取身份标识
+	 * 
+	 * @param
+	 * @return Serializable
+	 */
+	private Serializable getIdentifier(final T pojo) {
 
-    if (pojo instanceof BaseObject) {
-      return ((BaseObject) pojo).getId();
-    }
-    // 如果未知实体的主键，则获取pojo的身份标识名称
-    String keyName = getSessionFactory().getClassMetadata(pojo.getClass())
-        .getIdentifierPropertyName();
-    if (keyName != null) {
-      // 根据身份标识名称在pojo中获取相应的value
-      try {
-        return (Serializable) PropertyUtils.getProperty(pojo, keyName);
-      } catch (Exception e) {
-        throw new ConfigException("通过实体类" + pojo.getClass().getSimpleName() + "的hibernate配置无法获取id，请检查配置。");
-      }
+		if (pojo instanceof BaseObject) {
+			return ((BaseObject) pojo).getId();
+		}
+		// 如果未知实体的主键，则获取pojo的身份标识名称
+		final String keyName = getSessionFactory().getClassMetadata(pojo.getClass())
+				.getIdentifierPropertyName();
+		if (keyName != null) {
+			// 根据身份标识名称在pojo中获取相应的value
+			try {
+				return (Serializable) PropertyUtils.getProperty(pojo, keyName);
+			} catch (final Exception e) {
+				throw new ConfigException("通过实体类" + pojo.getClass().getSimpleName() + "的hibernate配置无法获取id，请检查配置。");
+			}
 
-    }
-    return null;
-  }
+		}
+		return null;
+	}
 
-  /**
-   * 描述：根据page、criteria获取分页对象
-   * 
-   * @param
-   * @return Page<T>
-   */
-  private Page<T> getPage(Page<T> page, Criteria criteria) {
+	/**
+	 * 描述：根据page、criteria获取分页对象
+	 * 
+	 * @param
+	 * @return Page<T>
+	 */
+	private Page<T> getPage(final Page<T> page, final Criteria criteria) {
 
-    if (page.isAutoCount()) {
-      page.setTotalCount(this.daoHelper.countCriteriaResult(criteria));
-    }
-    if (page.getTotalCount() > 0) {
-      this.daoHelper.setPageParameter(criteria, page);
-      page.setData(criteria.list());
-    } else {
-      page.setData(Collections.EMPTY_LIST);
-    }
-    return page;
-  }
+		if (page.isAutoCount()) {
+			page.setTotalCount(daoHelper.countCriteriaResult(criteria));
+		}
+		if (page.getTotalCount() > 0) {
+			daoHelper.setPageParameter(criteria, page);
+			page.setData(criteria.list());
+		} else {
+			page.setData(Collections.EMPTY_LIST);
+		}
+		return page;
+	}
 }

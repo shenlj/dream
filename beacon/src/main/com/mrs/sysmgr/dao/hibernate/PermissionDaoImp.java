@@ -6,5 +6,4 @@ import com.wholetech.commons.dao.BaseDaoImp;
 
 public class PermissionDaoImp extends BaseDaoImp<Permission> implements PermissionDao {
 
-
 }

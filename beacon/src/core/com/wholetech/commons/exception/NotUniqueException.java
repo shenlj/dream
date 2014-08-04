@@ -7,15 +7,18 @@ public class NotUniqueException extends RuntimeException {
 	private String filter;
 
 	public NotUniqueException() {
+
 	}
 
-	public NotUniqueException(String filter) {
+	public NotUniqueException(final String filter) {
+
 		this.filter = filter;
 	}
 
 	@Override
 	public String getMessage() {
-		return "查询条件[" + this.filter + "查出来多条数据";
+
+		return "查询条件[" + filter + "查出来多条数据";
 	}
 
 }

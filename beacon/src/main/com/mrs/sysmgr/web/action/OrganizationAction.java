@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.sf.json.JSONArray;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.config.Namespace;
 import org.apache.struts2.config.ParentPackage;
 import org.apache.struts2.config.Result;
@@ -12,93 +13,100 @@ import org.apache.struts2.config.Results;
 
 import com.mrs.sysmgr.entity.Organization;
 import com.mrs.sysmgr.service.OrganizationService;
+import com.opensymphony.xwork2.Action;
 import com.wholetech.commons.service.BaseService;
 import com.wholetech.commons.util.TreeUtil;
 import com.wholetech.commons.web.BaseAction;
 import com.wholetech.commons.web.JSONResult;
-import com.wholetech.commons.util.StringUtil;
+
 @ParentPackage("default")
 @Namespace("/sysmgr")
-@Results( { @Result(name = "orgView", value = "/app/sysmgr/orgBasic.jsp") })
+@Results({ @Result(name = "orgView", value = "/app/sysmgr/orgBasic.jsp") })
 public class OrganizationAction extends BaseAction<Organization> {
 
 	private OrganizationService organizationService;
 
-	public void setOrganizationService(OrganizationService organizationService) {
+	public void setOrganizationService(final OrganizationService organizationService) {
+
 		this.organizationService = organizationService;
 	}
 
 	@Override
 	protected BaseService getBaseService() {
+
 		// TODO Auto-generated method stub
-		return this.organizationService;
+		return organizationService;
 	}
 
 	public void getOrgTreeRoots() {
 
-		List<Object[]> rsList = (List<Object[]>) this.organizationService.findListBySql("sql_sys_getOrgTreeRoots");
-		JSONArray jsArray = JSONResult.list2Json(TreeUtil.changeTreeData(rsList), "id,name,isParent");
+		final List<Object[]> rsList = (List<Object[]>) organizationService.findListBySql("sql_sys_getOrgTreeRoots");
+		final JSONArray jsArray = JSONResult.list2Json(TreeUtil.changeTreeData(rsList), "id,name,isParent");
 		renderText(jsArray.toString());
 	}
 
 	public void getOrgChildrens() {
 
-		String pid = getParameter("id");
-		List<Object[]> rsList = (List<Object[]>) this.organizationService.findListBySql("sql_sys_getOrgChildrens",pid);
-		JSONArray jsArray = JSONResult.list2Json(TreeUtil.changeTreeData(rsList), "id,name,pId,isParent");
+		final String pid = getParameter("id");
+		final List<Object[]> rsList = (List<Object[]>) organizationService
+				.findListBySql("sql_sys_getOrgChildrens", pid);
+		final JSONArray jsArray = JSONResult.list2Json(TreeUtil.changeTreeData(rsList), "id,name,pId,isParent");
 		renderText(jsArray.toString());
 	}
-	
-	public void getOrgByID(){
-		
-		String id = getParameter("id");
-		Organization  organization= this.organizationService.get(id);
-		if(organization!=null){
-			List<Organization> list = new ArrayList();
+
+	public void getOrgByID() {
+
+		final String id = getParameter("id");
+		final Organization organization = organizationService.get(id);
+		if (organization != null) {
+			final List<Organization> list = new ArrayList();
 			list.add(organization);
-			String m = JSONResult.list2Json(list, "orgCode,orgName,orgLelvl,managername,address,treePath,status,contactname,contactphone,respon").toString();
+			final String m = JSONResult.list2Json(list,
+					"orgCode,orgName,orgLelvl,managername,address,treePath,status,contactname,contactphone,respon")
+					.toString();
 			renderText(m);
 		}
 	}
-	
+
 	public void prepareSaveOrg() throws Exception {
 
 		prepareModel();
 	}
-	
+
 	public String delOrg() {
 
 		try {
-			String id = this.getRequest().getParameter("id");
-			this.organizationService.remove(this.organizationService.get(id));
-			this.renderJson(true,"success");
-		} catch (Exception e) {
-			this.logger.error("×××机构删除失败：×××" + e.toString());
+			final String id = getRequest().getParameter("id");
+			organizationService.remove(organizationService.get(id));
+			this.renderJson(true, "success");
+		} catch (final Exception e) {
+			logger.error("×××机构删除失败：×××" + e.toString());
 			this.renderJson(false, "删除失败");
 		}
-		return NONE;
+		return Action.NONE;
 
 	}
-	
-	public String saveOrg(){
+
+	public String saveOrg() {
+
 		try {
-			Organization org = this.entityForm;
-			String fatherID = this.getRequest().getParameter("fatherID");
-			if(StringUtil.isNotEmpty(org.getId())){
-				this.organizationService.update(org);
-			}else{
-				if(StringUtil.isNotEmpty(fatherID)){
-					Organization parentOrg = this.organizationService.get(fatherID);
+			final Organization org = entityForm;
+			final String fatherID = getRequest().getParameter("fatherID");
+			if (StringUtils.isNotEmpty(org.getId())) {
+				organizationService.update(org);
+			} else {
+				if (StringUtils.isNotEmpty(fatherID)) {
+					final Organization parentOrg = organizationService.get(fatherID);
 					org.setFather(parentOrg);
 				}
-				this.organizationService.create(org);
+				organizationService.create(org);
 			}
-			this.renderJson(true,org.getId());
-		} catch (Exception e) {
-			this.logger.error("×××机构保存失败：×××" + e.toString());
+			this.renderJson(true, org.getId());
+		} catch (final Exception e) {
+			logger.error("×××机构保存失败：×××" + e.toString());
 			this.renderJson(false, "保存失败");
 		}
-		return NONE;
+		return Action.NONE;
 	}
 
 }

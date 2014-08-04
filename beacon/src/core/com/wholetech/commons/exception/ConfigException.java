@@ -6,7 +6,8 @@ public class ConfigException extends RuntimeException {
 
 	}
 
-	public ConfigException(String msg) {
+	public ConfigException(final String msg) {
+
 		super(msg);
 	}
 

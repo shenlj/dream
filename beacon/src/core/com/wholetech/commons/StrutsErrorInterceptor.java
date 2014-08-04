@@ -22,15 +22,16 @@ public class StrutsErrorInterceptor extends MethodFilterInterceptor {
 	private static final String resultName = "struts-error";
 
 	@Override
-	protected String doIntercept(ActionInvocation invocation) throws Exception {
-		ActionContext invocationContext = invocation.getInvocationContext();
-		Map<String, Object> errors = invocationContext.getConversionErrors();
+	protected String doIntercept(final ActionInvocation invocation) throws Exception {
+
+		final ActionContext invocationContext = invocation.getInvocationContext();
+		final Map<String, Object> errors = invocationContext.getConversionErrors();
 
 		if (errors.isEmpty()) {
 			return invocation.invoke();
 		} else {
-			logger.error("struts拦截器中有错误出现，导向到{}", resultName);
-			return resultName;
+			StrutsErrorInterceptor.logger.error("struts拦截器中有错误出现，导向到{}", StrutsErrorInterceptor.resultName);
+			return StrutsErrorInterceptor.resultName;
 		}
 
 	}

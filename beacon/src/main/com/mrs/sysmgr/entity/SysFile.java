@@ -18,156 +18,152 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "SysFile")
 public class SysFile {
 
-  /**
-   * 说明：
-   */
-  private static final long serialVersionUID = 1L;
-  private String id;
-  private String fileName;
-  private String logicFileName;
-  private String busiId;
-  private String busiType;
-  private String locked;
-  private String remark;
-  private String operatorCode;
-  private String operatorName;
-  private String operateType;
-  private Date operateTime;
+	private String id;
+	private String fileName;
+	private String logicFileName;
+	private String busiId;
+	private String busiType;
+	private String locked;
+	private String remark;
+	private String operatorCode;
+	private String operatorName;
+	private String operateType;
+	private Date operateTime;
 
-  public SysFile() {
+	public SysFile() {
 
-  }
+	}
 
-  /**
-   * 通过数组构造SysFile。
-   * 要求数组的顺序对应：ID, FILENAME, LOGICFILENAME, BUSIID, BUSITYPE;
-   * 而且数量 不能少。
-   * 
-   * @param arr
-   */
-  public SysFile(Object[] arr) {
+	/**
+	 * 通过数组构造SysFile。
+	 * 要求数组的顺序对应：ID, FILENAME, LOGICFILENAME, BUSIID, BUSITYPE;
+	 * 而且数量 不能少。
+	 * 
+	 * @param arr
+	 */
+	public SysFile(final Object[] arr) {
 
-    this.id = arr[0].toString();
-    this.fileName = arr[1].toString();
-    this.logicFileName = arr[2].toString();
-    this.busiId = arr[3] == null ? "" : arr[3].toString();
-    this.busiType = arr[4] == null ? "" : arr[4].toString();
-    this.locked = arr[5] == null ? "" : arr[5].toString();
-    this.remark = arr[6] == null ? "" : arr[6].toString();
-    this.operatorCode = arr[7] == null ? "" : arr[7].toString();
-    this.operatorName = arr[8] == null ? "" : arr[8].toString();
-    this.operateTime = arr[9] == null ? null : (Date) arr[9];
-    this.remark = arr[10] == null ? "" : arr[10].toString();
-  }
+		id = arr[0].toString();
+		fileName = arr[1].toString();
+		logicFileName = arr[2].toString();
+		busiId = arr[3] == null ? "" : arr[3].toString();
+		busiType = arr[4] == null ? "" : arr[4].toString();
+		locked = arr[5] == null ? "" : arr[5].toString();
+		remark = arr[6] == null ? "" : arr[6].toString();
+		operatorCode = arr[7] == null ? "" : arr[7].toString();
+		operatorName = arr[8] == null ? "" : arr[8].toString();
+		operateTime = arr[9] == null ? null : (Date) arr[9];
+		remark = arr[10] == null ? "" : arr[10].toString();
+	}
 
-  public String getFileName() {
+	public String getFileName() {
 
-    return this.fileName;
-  }
+		return fileName;
+	}
 
-  public void setFileName(String fileName) {
+	public void setFileName(final String fileName) {
 
-    this.fileName = fileName;
-  }
+		this.fileName = fileName;
+	}
 
-  public String getLogicFileName() {
+	public String getLogicFileName() {
 
-    return this.logicFileName;
-  }
+		return logicFileName;
+	}
 
-  public void setLogicFileName(String logicFileName) {
+	public void setLogicFileName(final String logicFileName) {
 
-    this.logicFileName = logicFileName;
-  }
+		this.logicFileName = logicFileName;
+	}
 
-  public String getBusiId() {
+	public String getBusiId() {
 
-    return this.busiId;
-  }
+		return busiId;
+	}
 
-  public void setBusiId(String busiId) {
+	public void setBusiId(final String busiId) {
 
-    this.busiId = busiId;
-  }
+		this.busiId = busiId;
+	}
 
-  public String getBusiType() {
+	public String getBusiType() {
 
-    return this.busiType;
-  }
+		return busiType;
+	}
 
-  public void setBusiType(String busiType) {
+	public void setBusiType(final String busiType) {
 
-    this.busiType = busiType;
-  }
+		this.busiType = busiType;
+	}
 
-  public String getLocked() {
+	public String getLocked() {
 
-    return this.locked;
-  }
+		return locked;
+	}
 
-  public void setLocked(String locked) {
+	public void setLocked(final String locked) {
 
-    this.locked = locked;
-  }
+		this.locked = locked;
+	}
 
-  public String getRemark() {
+	public String getRemark() {
 
-    return this.remark;
-  }
+		return remark;
+	}
 
-  public void setRemark(String remark) {
+	public void setRemark(final String remark) {
 
-    this.remark = remark;
-  }
+		this.remark = remark;
+	}
 
-  public String getId() {
+	public String getId() {
 
-    return this.id;
-  }
+		return id;
+	}
 
-  public void setId(String id) {
+	public void setId(final String id) {
 
-    this.id = id;
-  }
+		this.id = id;
+	}
 
-  public String getOperatorCode() {
+	public String getOperatorCode() {
 
-    return this.operatorCode;
-  }
+		return operatorCode;
+	}
 
-  public void setOperatorCode(String operatorCode) {
+	public void setOperatorCode(final String operatorCode) {
 
-    this.operatorCode = operatorCode;
-  }
+		this.operatorCode = operatorCode;
+	}
 
-  public String getOperatorName() {
+	public String getOperatorName() {
 
-    return this.operatorName;
-  }
+		return operatorName;
+	}
 
-  public void setOperatorName(String operatorName) {
+	public void setOperatorName(final String operatorName) {
 
-    this.operatorName = operatorName;
-  }
+		this.operatorName = operatorName;
+	}
 
-  public String getOperateType() {
+	public String getOperateType() {
 
-    return this.operateType;
-  }
+		return operateType;
+	}
 
-  public void setOperateType(String operateType) {
+	public void setOperateType(final String operateType) {
 
-    this.operateType = operateType;
-  }
+		this.operateType = operateType;
+	}
 
-  public Date getOperateTime() {
+	public Date getOperateTime() {
 
-    return this.operateTime;
-  }
+		return operateTime;
+	}
 
-  public void setOperateTime(Date operateTime) {
+	public void setOperateTime(final Date operateTime) {
 
-    this.operateTime = operateTime;
-  }
+		this.operateTime = operateTime;
+	}
 
 }

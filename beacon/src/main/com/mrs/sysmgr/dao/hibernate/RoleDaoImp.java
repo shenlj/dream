@@ -6,5 +6,4 @@ import com.wholetech.commons.dao.BaseDaoImp;
 
 public class RoleDaoImp extends BaseDaoImp<Role> implements RoleDao {
 
-
 }

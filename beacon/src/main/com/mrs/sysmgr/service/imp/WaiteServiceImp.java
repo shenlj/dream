@@ -5,6 +5,7 @@ import com.mrs.sysmgr.service.WaiteService;
 
 public abstract class WaiteServiceImp implements WaiteService {
 
+	@Override
 	public abstract int getWaiteNum(User user);
 
 }

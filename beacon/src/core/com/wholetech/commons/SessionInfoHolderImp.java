@@ -7,75 +7,87 @@ import com.wholetech.commons.util.SessionInfoHolder;
 public class SessionInfoHolderImp implements SessionInfoHolder {
 
 	@Override
-	public String getEmail(HttpServletRequest request) {
+	public String getEmail(final HttpServletRequest request) {
+
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getLoginIP(HttpServletRequest request) {
+	public String getLoginIP(final HttpServletRequest request) {
+
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getLoginId(HttpServletRequest request) {
+	public String getLoginId(final HttpServletRequest request) {
+
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getLoginName(HttpServletRequest request) {
+	public String getLoginName(final HttpServletRequest request) {
+
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getLoginTime(HttpServletRequest request) {
+	public String getLoginTime(final HttpServletRequest request) {
+
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getMobilePhone(HttpServletRequest request) {
+	public String getMobilePhone(final HttpServletRequest request) {
+
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getOrgCode(HttpServletRequest request) {
+	public String getOrgCode(final HttpServletRequest request) {
+
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getOrgName(HttpServletRequest request) {
+	public String getOrgName(final HttpServletRequest request) {
+
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getOrgPath(HttpServletRequest request) {
+	public String getOrgPath(final HttpServletRequest request) {
+
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getPasswd(HttpServletRequest request) {
+	public String getPasswd(final HttpServletRequest request) {
+
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String getUserId(HttpServletRequest request) {
+	public String getUserId(final HttpServletRequest request) {
+
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public boolean isLogined(HttpServletRequest request) {
+	public boolean isLogined(final HttpServletRequest request) {
+
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 }

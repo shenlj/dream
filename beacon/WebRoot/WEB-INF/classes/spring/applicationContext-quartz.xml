@@ -10,8 +10,8 @@
 	<bean id="schedulerDuty" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 		<property name="triggers">
 			<list>
-				<!-- 约跑任务表定时任务-->
-				<ref local="updateTaskztTrigger"/> 
+				<!-- 约跑任务表定时任务
+				<ref local="updateTaskztTrigger"/> -->
 			</list>
 		</property>
 		<property name="configLocation" value="classpath:conf/quartz.properties">
@@ -51,7 +51,7 @@
 	<!-- 选课任务状态变化 job 发布到进行选课，从进行选课到结束选课 24小时执行一次 creat by Gary Gao 2012-4-28 5分钟运行一次-->
 
 	
-	<!-- 整点执行 -->
+	<!-- 整点执行
     <bean id="updateTaskztTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
         <property name="jobDetail" ref="updateTaskJob" />
         <property name="cronExpression" value="0 0 0-23 * * ?" />
@@ -60,7 +60,7 @@
         <property name="concurrent" value="false" />
         <property name="targetObject" ref="znshGlService" />
         <property name="targetMethod" value="executeTaskZt" />
-    </bean>
+    </bean> -->
 	
    
 	

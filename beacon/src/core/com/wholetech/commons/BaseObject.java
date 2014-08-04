@@ -2,7 +2,7 @@ package com.wholetech.commons;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 public class BaseObject implements java.io.Serializable {
@@ -14,8 +14,11 @@ public class BaseObject implements java.io.Serializable {
 	protected final static ToStringStyle TO_STRING_STYLE = ToStringStyle.MULTI_LINE_STYLE;
 
 	private String id;
-	
-	public void setId(String id) {
+
+	private boolean added;
+
+	public void setId(final String id) {
+
 		if (StringUtils.isBlank(id)) {
 			this.id = null;
 		} else {
@@ -24,15 +27,30 @@ public class BaseObject implements java.io.Serializable {
 	}
 
 	public String getId() {
-		return id;
+
+		return this.id;
 	}
 
+	public boolean isAdded() {
+
+		return this.added;
+	}
+
+	public void setAdded(final boolean added) {
+
+		this.added = added;
+	}
+
+	@Override
 	public String toString() {
-		return ReflectionToStringBuilder.reflectionToString(this,
-				TO_STRING_STYLE);
+
+		return ToStringBuilder.reflectionToString(this,
+				BaseObject.TO_STRING_STYLE);
 	}
 
-	public boolean equals(Object o) {
+	@Override
+	public boolean equals(final Object o) {
+
 		return EqualsBuilder.reflectionEquals(this, o);
 	}
 

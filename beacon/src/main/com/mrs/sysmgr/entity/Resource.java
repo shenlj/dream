@@ -3,20 +3,15 @@ package com.mrs.sysmgr.entity;
 import java.util.Set;
 
 import com.wholetech.commons.BaseStandardEntity;
- 
+
 /**
  * 文件名： Resource.java
  * 功能说明：资源实体
- * 
  * ===============================================================================
  * 修改记录：
- * 修改作者    日期      修改内容
- * 
- *
- * 
- * 
+ * 修改作者 日期 修改内容
  * ===============================================================================
- *  Copyright (c) 2007-2008 Digitalchina CO.,LTD.  All rights reserved.
+ * Copyright (c) 2007-2008 Digitalchina CO.,LTD. All rights reserved.
  */
 public class Resource extends BaseStandardEntity implements java.io.Serializable {
 
@@ -50,65 +45,79 @@ public class Resource extends BaseStandardEntity implements java.io.Serializable
 	 * 说明：资源权限
 	 */
 	private Set<Permission> permissions;
-	
+
 	/**
 	 * 说明：辅助字段，用于判定是否授权
 	 */
 	private transient String authorize;
 
 	public String getName() {
-		return this.name;
+
+		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
+
 		this.name = name;
 	}
 
 	public String getForMenu() {
-		return forMenu;
+
+		return this.forMenu;
 	}
 
-	public void setForMenu(String forMenu) {
+	public void setForMenu(final String forMenu) {
+
 		this.forMenu = forMenu;
 	}
 
 	public String getResString() {
-		return this.resString;
+
+		return resString;
 	}
 
-	public void setResString(String resString) {
+	public void setResString(final String resString) {
+
 		this.resString = resString;
 	}
 
 	public String getDescn() {
-		return this.descn;
+
+		return descn;
 	}
 
-	public void setDescn(String descn) {
+	public void setDescn(final String descn) {
+
 		this.descn = descn;
 	}
 
 	public Set<Permission> getPermissions() {
-		return this.permissions;
+
+		return permissions;
 	}
 
-	public void setPermissions(Set<Permission> permissions) {
+	public void setPermissions(final Set<Permission> permissions) {
+
 		this.permissions = permissions;
 	}
 
 	public String getAuthorize() {
-		return authorize;
+
+		return this.authorize;
 	}
 
-	public void setAuthorize(String authorize) {
+	public void setAuthorize(final String authorize) {
+
 		this.authorize = authorize;
 	}
 
 	public String getResType() {
-		return resType;
+
+		return this.resType;
 	}
 
-	public void setResType(String resType) {
+	public void setResType(final String resType) {
+
 		this.resType = resType;
 	}
 }

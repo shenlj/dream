@@ -7,23 +7,18 @@ import com.wholetech.commons.BaseStandardEntity;
 /**
  * 文件名： Role.java
  * 功能说明：角色实体
- * 
  * ===============================================================================
  * 修改记录：
- * 修改作者    日期      修改内容
- * 
- *
- * 
- * 
+ * 修改作者 日期 修改内容
  * ===============================================================================
- *  Copyright (c) 2007-2008 Digitalchina CO.,LTD.  All rights reserved.
+ * Copyright (c) 2007-2008 Digitalchina CO.,LTD. All rights reserved.
  */
-public class Role extends BaseStandardEntity implements java.io.Serializable{
+public class Role extends BaseStandardEntity implements java.io.Serializable {
 
 	static final long serialVersionUID = -4784413569679218911L;
 
 	private String name;
-	
+
 	private String status;
 
 	private String descn;
@@ -41,80 +36,98 @@ public class Role extends BaseStandardEntity implements java.io.Serializable{
 	private String authorize;
 
 	public String getName() {
-		return this.name;
+
+		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
+
 		this.name = name;
 	}
 
 	public String getDescn() {
-		return this.descn;
+
+		return descn;
 	}
 
-	public void setDescn(String descn) {
+	public void setDescn(final String descn) {
+
 		this.descn = descn;
 	}
-	
+
 	public String getPrincipalId() {
-        return this.principalId;
-    }
-    
-    public void setPrincipalId(String principalId) {
-        this.principalId = principalId;
-    }
-	
-	public String getPrincipalName() {
-		return this.principalName;
+
+		return principalId;
 	}
 
-	public void setPrincipalName(String principalName) {
+	public void setPrincipalId(final String principalId) {
+
+		this.principalId = principalId;
+	}
+
+	public String getPrincipalName() {
+
+		return principalName;
+	}
+
+	public void setPrincipalName(final String principalName) {
+
 		this.principalName = principalName;
 	}
 
 	public Set<User> getUsers() {
-		return this.users;
+
+		return users;
 	}
 
-	public void setUsers(Set<User> users) {
+	public void setUsers(final Set<User> users) {
+
 		this.users = users;
 	}
 
 	public Set<Permission> getPermissions() {
-		return this.permissions;
+
+		return permissions;
 	}
 
-	public void setPermissions(Set<Permission> permissions) {
+	public void setPermissions(final Set<Permission> permissions) {
+
 		this.permissions = permissions;
 	}
 
 	public String getAuthorize() {
-		return authorize;
+
+		return this.authorize;
 	}
 
-	public void setAuthorize(String authorize) {
+	public void setAuthorize(final String authorize) {
+
 		this.authorize = authorize;
 	}
 
 	public String getAuthority() {
-		return name;
+
+		return this.name;
 	}
 
 	public String getIsAdmin() {
-		return isAdmin;
+
+		return this.isAdmin;
 	}
 
-	public void setIsAdmin(String isAdmin) {
+	public void setIsAdmin(final String isAdmin) {
+
 		this.isAdmin = isAdmin;
 	}
 
 	public String getStatus() {
-		return status;
+
+		return this.status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(final String status) {
+
 		this.status = status;
 	}
-	
 
 }

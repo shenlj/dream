@@ -13,18 +13,19 @@ public class WaiteListServiceImp extends BaseServiceImp implements WaiteListServ
 
 	@Override
 	protected BaseDao getBaseDao() {
+
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<Map> getWaiteList() {
+
 		// TODO Auto-generated method stub
-		
-		List<Map> rsList = new ArrayList();
-		String waitstr =  PropertyXmlMgr.getString("WAITE", "waite");
+
+		new ArrayList();
+		PropertyXmlMgr.getString("WAITE", "waite");
 		return null;
 	}
 
-		
 }

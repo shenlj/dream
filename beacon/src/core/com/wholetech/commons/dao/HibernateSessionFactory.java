@@ -6,8 +6,7 @@ import org.hibernate.cfg.Configuration;
 
 /**
  * Configures and provides access to Hibernate sessions, tied to the current
- * thread of execution. Follows the Thread Local Session pattern, see
- * {@link http://hibernate.org/42.html }.
+ * thread of execution. Follows the Thread Local Session pattern, see {@link http://hibernate.org/42.html }.
  */
 public class HibernateSessionFactory {
 
@@ -22,38 +21,40 @@ public class HibernateSessionFactory {
 	private static final ThreadLocal<Session> threadLocal = new ThreadLocal<Session>();
 	private static Configuration configuration = new Configuration();
 	private static org.hibernate.SessionFactory sessionFactory;
-	private static String configFile = CONFIG_FILE_LOCATION;
+	private static String configFile = HibernateSessionFactory.CONFIG_FILE_LOCATION;
 
 	static {
 		try {
-			configuration.configure(configFile);
-			sessionFactory = configuration.buildSessionFactory();
-		} catch (Exception e) {
+			HibernateSessionFactory.configuration.configure(HibernateSessionFactory.configFile);
+			HibernateSessionFactory.sessionFactory = HibernateSessionFactory.configuration.buildSessionFactory();
+		} catch (final Exception e) {
 			System.err.println("%%%% Error Creating SessionFactory %%%%");
 			e.printStackTrace();
 		}
 	}
+
 	private HibernateSessionFactory() {
+
 	}
 
 	/**
-	 * Returns the ThreadLocal Session instance. Lazy initialize the
-	 * <code>SessionFactory</code> if needed.
-	 * 
+	 * Returns the ThreadLocal Session instance. Lazy initialize the <code>SessionFactory</code> if needed.
+	 *
 	 * @return Session
 	 * @throws HibernateException
 	 */
 	public static Session getSession() throws HibernateException {
-		Session session = (Session) threadLocal.get();
+
+		Session session = HibernateSessionFactory.threadLocal.get();
 
 		if (session == null || !session.isOpen()) {
-			if (sessionFactory == null) {
-				rebuildSessionFactory();
+			if (HibernateSessionFactory.sessionFactory == null) {
+				HibernateSessionFactory.rebuildSessionFactory();
 			}
-			session = (sessionFactory != null)
-					? sessionFactory.openSession()
-					: null;
-			threadLocal.set(session);
+			session = (HibernateSessionFactory.sessionFactory != null)
+					? HibernateSessionFactory.sessionFactory.openSession()
+							: null;
+					HibernateSessionFactory.threadLocal.set(session);
 		}
 
 		return session;
@@ -61,13 +62,13 @@ public class HibernateSessionFactory {
 
 	/**
 	 * Rebuild hibernate session factory
-	 * 
 	 */
 	public static void rebuildSessionFactory() {
+
 		try {
-			configuration.configure(configFile);
-			sessionFactory = configuration.buildSessionFactory();
-		} catch (Exception e) {
+			HibernateSessionFactory.configuration.configure(HibernateSessionFactory.configFile);
+			HibernateSessionFactory.sessionFactory = HibernateSessionFactory.configuration.buildSessionFactory();
+		} catch (final Exception e) {
 			System.err.println("%%%% Error Creating SessionFactory %%%%");
 			e.printStackTrace();
 		}
@@ -75,12 +76,13 @@ public class HibernateSessionFactory {
 
 	/**
 	 * Close the single hibernate session instance.
-	 * 
+	 *
 	 * @throws HibernateException
 	 */
 	public static void closeSession() throws HibernateException {
-		Session session = (Session) threadLocal.get();
-		threadLocal.set(null);
+
+		final Session session = HibernateSessionFactory.threadLocal.get();
+		HibernateSessionFactory.threadLocal.set(null);
 
 		if (session != null) {
 			session.close();
@@ -89,28 +91,28 @@ public class HibernateSessionFactory {
 
 	/**
 	 * return session factory
-	 * 
 	 */
 	public static org.hibernate.SessionFactory getSessionFactory() {
-		return sessionFactory;
+
+		return HibernateSessionFactory.sessionFactory;
 	}
 
 	/**
 	 * return session factory
-	 * 
 	 * session factory will be rebuilded in the next call
 	 */
-	public static void setConfigFile(String configFile) {
+	public static void setConfigFile(final String configFile) {
+
 		HibernateSessionFactory.configFile = configFile;
-		sessionFactory = null;
+		HibernateSessionFactory.sessionFactory = null;
 	}
 
 	/**
 	 * return hibernate configuration
-	 * 
 	 */
 	public static Configuration getConfiguration() {
-		return configuration;
+
+		return HibernateSessionFactory.configuration;
 	}
 
 }

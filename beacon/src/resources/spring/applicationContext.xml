@@ -52,7 +52,7 @@
             </list>
         </property>
     </bean>
-    <!--<bean scope="singleton" id="dataSource"
+    <bean scope="singleton" id="dataSource"
         class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="${jdbc.driverClassName}" />
         <property name="url" value="${jdbc.url}" />
@@ -66,12 +66,12 @@
         <property name="removeAbandoned" value="true" />
         <property name="removeAbandonedTimeout" value="20" />
         <property name="maxWait" value="1000" />
-    </bean>-->
-    <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+    </bean>
+    <!--<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
         <property name="jndiName">
             <value>java:comp/env/jdbc/znsh</value>
         </property>
-    </bean>
+    </bean>-->
 
 
         <!--数据源定义,使用应用服务器连接池
@@ -180,21 +180,5 @@
   <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
   
   
-   <!-- JAX-WS -->
-   <!-- implementor 指定 WebService 实现类, address 指定访问地址 -->
-   <jaxws:endpoint implementor="#znshGlService" address="/znshWs" publish="true" >
-   </jaxws:endpoint>
-   
-   <jaxrs:server id="znshGlServiceContainer" address="/znshRs">
-    <jaxrs:serviceBeans>
-        <ref bean="znshGlService" />
-    </jaxrs:serviceBeans>
-    <jaxrs:extensionMappings>
-        <entry key="json" value="application/json" />
-        <entry key="xml" value="application/xml" />
-    </jaxrs:extensionMappings>
-    <jaxrs:languageMappings>
-           <entry key="en" value="en-gb"/>  
-    </jaxrs:languageMappings>
-</jaxrs:server>
+
 </beans>
