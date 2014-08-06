@@ -47,5 +47,6 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.wst.jsdt.core.jsNature</nature>
 		<nature>com.genuitec.eclipse.cross.easystruts.eclipse.easystrutsnature</nature>
+		<nature>com.sysdeo.eclipse.tomcat.tomcatnature</nature>
 	</natures>
 </projectDescription>
