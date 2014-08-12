@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN" "http://struts.apache.org/dtds/struts-2.3.dtd">
 <struts>
+  <constant name="struts.enable.DynamicMethodInvocation" value="true" /> 
   <constant name="struts.codebehind.pathPrefix" value="/app/" />
+  <constant name="struts.devMode" value="true" /> 
   <constant name="struts.custom.i18n.resources" value="i18n/messages" />
   <constant name="struts.multipart.maxSize" value="524288000" />
   <constant name="struts.ui.theme" value="simple" />
-  <package name="default-with-exceptions" extends="struts-default"
-    abstract="true">
+  <package name="default-with-exceptions" extends="struts-default"  abstract="true">
     <!-- 全局results配置 -->
     <global-results>
       <result name="exception-error-page">/errors/error.jsp</result>
@@ -19,7 +20,6 @@
       <exception-mapping result="exception-error-page" exception="java.lang.Exception"></exception-mapping>
     </global-exception-mappings>
   </package>
-
   <package name="default" extends="default-with-exceptions">
     <interceptors>
       <interceptor name="strutserror" class="com.wholetech.commons.StrutsErrorInterceptor" />

@@ -24,3 +24,4 @@ String allURL = localStringBuffer.toString();
 %>
 <c:set var="ctx" scope="request" value="${pageContext.request.contextPath}" />
 <c:set var="ctxFull" scope="request" value="<%=allURL%>"/>
+<c:set var="themes" scope="request" value="one" />

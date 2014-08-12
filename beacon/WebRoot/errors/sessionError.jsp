@@ -12,5 +12,5 @@
 	alert("你所使用的账户已经从系统注销，请你重新登录");
 <%}%>
 
-	top.location.href = "${pageContext.request.contextPath}/index.jsp";
+	top.location.href = "${pageContext.request.contextPath}/login.jsp";
 </script>

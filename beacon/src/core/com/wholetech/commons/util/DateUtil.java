@@ -17,6 +17,7 @@ import com.wholetech.commons.Constants;
 
 /**
  * 日期Util类。
+ * 
  * 转换日期时，如果不指定日期格式，则使用默认的日期格式。<br>
  * 默认的日期格式可以在文件messages_zh_CN.properties中通过属性date.default_format来指定。不指定的情况下默认使用
  * yyyy-MM-dd作为日期格式，日期时间格式默认使用yyyy-MM-dd HH:mm:ss
@@ -25,7 +26,10 @@ public class DateUtil extends org.apache.commons.lang.time.DateUtils {
 
 	/** 格式yyyy-MM-dd */
 	public static final String FMT_DATE_YYYY_MM_DD = "yyyy-MM-dd";
-
+	/** 格式yyyy-MM-dd hh24:mm:ss*/
+	public static final String FMT_DATE_YYYY_MM_DD_HH24_MM_SS = "yyyy-MM-dd HH:mm:ss";
+	/** 格式yyyy-MM-dd hh24:mm:ss:sss*/
+	public static final String FMT_DATE_YYYY_MM_DD_HH24_MM_SS_SSS = "yyyy-MM-dd HH:mm:ss:sss";
 	/** 格式yyyyMMdd */
 	public static final String FMT_DATE_YYYYMMDD = "yyyyMMdd";
 
@@ -55,10 +59,10 @@ public class DateUtil extends org.apache.commons.lang.time.DateUtils {
 	static {
 		// 尝试试从messages_zh_Cn.properties中获取defaultDatePattner.
 		try {
-			final Locale locale = LocaleContextHolder.getLocale();
-			DateUtil.defaultDatePattern = ResourceBundle.getBundle(
+			Locale locale = LocaleContextHolder.getLocale();
+			defaultDatePattern = ResourceBundle.getBundle(
 					Constants.MESSAGE_BUNDLE_KEY, locale).getString("date.default_format");
-		} catch (final MissingResourceException mse) {
+		} catch (MissingResourceException mse) {
 			// do nothing
 		}
 	}
@@ -67,12 +71,10 @@ public class DateUtil extends org.apache.commons.lang.time.DateUtils {
 	 * 获得默认的 date pattern
 	 */
 	public static String getDatePattern() {
-
-		return DateUtil.defaultDatePattern;
+		return defaultDatePattern;
 	}
 
 	public static String getDateTimePattern() {
-
 		return DateUtil.getDatePattern() + " HH:mm:ss";
 	}
 
@@ -80,76 +82,69 @@ public class DateUtil extends org.apache.commons.lang.time.DateUtils {
 	 * 返回预设Format的当前应用服务器运行的日期字符串。
 	 */
 	public static String getToday() {
-
-		final Date today = new Date();
-		return DateUtil.format(today);
+		Date today = new Date();
+		return format(today);
 	}
 
 	/**
 	 * 返回Format的当前应用服务器运行的日期时间字符串。
 	 */
 	public static String getTodayTime() {
-
-		final Date today = new Date();
+		Date today = new Date();
 		return DateUtil.format(today, DateUtil.getDateTimePattern());
 	}
 
 	/**
 	 * 使用默认Format格式化Date成字符串。
 	 */
-	public static String format(final Date date) {
-
-		return date == null ? "" : DateUtil.format(date, DateUtil.getDatePattern());
+	public static String format(Date date) {
+		return date == null ? "" : format(date, getDatePattern());
 	}
 
 	/**
 	 * 使用参数Format格式化Date成字符串。如果参数date为null，则返回空字符串""。
-	 *
+	 * 
 	 * @param date
 	 *            待转换日期。
 	 * @param pattern
 	 *            指定的转换格式。
 	 */
-	public static String format(final Date date, final String pattern) {
-
+	public static String format(Date date, String pattern) {
 		return date == null ? "" : new SimpleDateFormat(pattern).format(date);
 	}
 
 	/**
 	 * 使用预设格式将字符串解析为Date。
 	 */
-	public static Date parse(final String strDate) throws ParseException {
-
-		return StringUtils.isBlank(strDate) ? null : DateUtil.parse(strDate,
-				DateUtil.getDatePattern());
+	public static Date parse(String strDate) throws ParseException {
+		return StringUtils.isBlank(strDate) ? null : parse(strDate,
+				getDatePattern());
 	}
 
 	/**
 	 * 使用指定格式Format将字符串解析为Date。如果参数strDate为null，则返回null。
-	 *
+	 * 
 	 * @param strDate
 	 *            待解析日期字符串。
 	 * @param pattern
 	 *            指定的转换格式。
 	 */
-	public static Date parse(final String strDate, final String pattern)
+	public static Date parse(String strDate, String pattern)
 			throws ParseException {
-
 		return StringUtils.isBlank(strDate) ? null : new SimpleDateFormat(
 				pattern).parse(strDate);
 	}
 
 	/**
 	 * 在日期上增加数个整月。
-	 *
+	 * 
 	 * @param date
 	 *            待操作日期。
 	 * @param n
 	 *            要增加的月数。
 	 */
-	public static Date addMonth(final Date date, final int n) {
-
-		final Calendar cal = Calendar.getInstance();
+	public static Date addMonth(Date date, int n) {
+		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		cal.add(Calendar.MONTH, n);
 		return cal.getTime();
@@ -163,18 +158,17 @@ public class DateUtil extends org.apache.commons.lang.time.DateUtils {
 
 	/**
 	 * 将一个日期转换成默认的日期格式。
-	 *
+	 * 
 	 * @param aDate
 	 *            待转换日期。
 	 * @return 格式化后的日期。
 	 */
-	public static final String getDate(final Date aDate) {
-
+	public static final String getDate(Date aDate) {
 		SimpleDateFormat df = null;
 		String returnValue = "";
 
 		if (aDate != null) {
-			df = new SimpleDateFormat(DateUtil.getDatePattern());
+			df = new SimpleDateFormat(getDatePattern());
 			returnValue = df.format(aDate);
 		}
 
@@ -183,7 +177,7 @@ public class DateUtil extends org.apache.commons.lang.time.DateUtils {
 
 	/**
 	 * 将一个字符串按照指定的格式转换成日期。
-	 *
+	 * 
 	 * @param aMask
 	 *            格式。
 	 * @param strDate
@@ -191,20 +185,19 @@ public class DateUtil extends org.apache.commons.lang.time.DateUtils {
 	 * @return 转换后的日期对象。
 	 * @throws ParseException
 	 */
-	public static final Date convertStringToDate(final String aMask, final String strDate)
+	public static final Date convertStringToDate(String aMask, String strDate)
 			throws ParseException {
-
 		SimpleDateFormat df = null;
 		Date date = null;
 		df = new SimpleDateFormat(aMask);
 
-		if (DateUtil.log.isDebugEnabled()) {
-			DateUtil.log.debug("converting '" + strDate + "' to date with mask '" + aMask + "'");
+		if (log.isDebugEnabled()) {
+			log.debug("converting '" + strDate + "' to date with mask '" + aMask + "'");
 		}
 
 		try {
 			date = df.parse(strDate);
-		} catch (final ParseException pe) {
+		} catch (ParseException pe) {
 			throw new ParseException(pe.getMessage(), pe.getErrorOffset());
 		}
 
@@ -213,32 +206,30 @@ public class DateUtil extends org.apache.commons.lang.time.DateUtils {
 
 	/**
 	 * 使用默认的时间格式(HH:mm)转换字符串。
-	 *
+	 * 
 	 * @param theTime
 	 *            待转换的日期对象。
 	 * @return 格式化后的字符串。
 	 */
-	public static String getTimeNow(final Date theTime) {
-
-		return DateUtil.getDateTime(DateUtil.timePattern, theTime);
+	public static String getTimeNow(Date theTime) {
+		return getDateTime(timePattern, theTime);
 	}
 
 	/**
 	 * 将指定日期按照指定格式转换成字符串。
-	 *
+	 * 
 	 * @param aMask
 	 *            指定的格式。
 	 * @param aDate
 	 *            待转换日期对象。
 	 * @return 格式化的日期字符串。
 	 */
-	public static final String getDateTime(final String aMask, final Date aDate) {
-
+	public static final String getDateTime(String aMask, Date aDate) {
 		SimpleDateFormat df = null;
 		String returnValue = "";
 
 		if (aDate == null) {
-			DateUtil.log.error("aDate is null!");
+			log.error("aDate is null!");
 		} else {
 			df = new SimpleDateFormat(aMask);
 			returnValue = df.format(aDate);
@@ -249,37 +240,36 @@ public class DateUtil extends org.apache.commons.lang.time.DateUtils {
 
 	/**
 	 * 按照默认的日期格式将指定日期对象转换成字符串。
-	 *
+	 * 
 	 * @param aDate
 	 *            待转换的日期。
 	 * @return 转换后的字符串。
 	 */
-	public static final String convertDateToString(final Date aDate) {
-
-		return DateUtil.getDateTime(DateUtil.getDatePattern(), aDate);
+	public static final String convertDateToString(Date aDate) {
+		return getDateTime(getDatePattern(), aDate);
 	}
 
 	/**
 	 * 使用DateUtil默认的格式来转换日期字符串为日期对象。
-	 *
+	 * 
 	 * @param strDate
 	 *            日期字符串表示。
 	 * @return 转换后的日期对象。
+	 * 
 	 * @throws ParseException
 	 */
-	public static Date convertStringToDate(final String strDate)
+	public static Date convertStringToDate(String strDate)
 			throws ParseException {
-
 		Date aDate = null;
 
 		try {
-			if (DateUtil.log.isDebugEnabled()) {
-				DateUtil.log.debug("converting date with pattern: " + DateUtil.getDatePattern());
+			if (log.isDebugEnabled()) {
+				log.debug("converting date with pattern: " + getDatePattern());
 			}
 
-			aDate = DateUtil.convertStringToDate(DateUtil.getDatePattern(), strDate);
-		} catch (final ParseException pe) {
-			DateUtil.log.error("Could not convert '" + strDate
+			aDate = convertStringToDate(getDatePattern(), strDate);
+		} catch (ParseException pe) {
+			log.error("Could not convert '" + strDate
 					+ "' to a date, throwing exception", pe);
 			throw new ParseException(pe.getMessage(), pe.getErrorOffset());
 		}
@@ -289,7 +279,7 @@ public class DateUtil extends org.apache.commons.lang.time.DateUtils {
 
 	/**
 	 * 日期格式化方法。
-	 *
+	 * 
 	 * @param date
 	 *            要格式化的日期。
 	 * @param nFmt
@@ -297,9 +287,8 @@ public class DateUtil extends org.apache.commons.lang.time.DateUtils {
 	 * @see DateUtil#FMT_DATE_YYYY_MM_DD
 	 * @return
 	 */
-	public static String formatDate(final Date date, final String nFmt) {
-
-		final SimpleDateFormat fmtDate = new SimpleDateFormat(nFmt);
+	public static String formatDate(Date date, String nFmt) {
+		SimpleDateFormat fmtDate = new SimpleDateFormat(nFmt);
 		return fmtDate.format(date);
 	}
 
@@ -307,7 +296,6 @@ public class DateUtil extends org.apache.commons.lang.time.DateUtils {
 	 * 获取当前应用服务器日期时间的字符串表示，格式由{@link DateUtil#FMT_DATE_YYYYMMDDHHmmss}来指定。
 	 */
 	public static String getCurrentDateTime() {
-
 		return DateUtil.formatDate(new Date(), DateUtil.FMT_DATE_YYYYMMDDHHmmss);
 	}
 
@@ -315,7 +303,6 @@ public class DateUtil extends org.apache.commons.lang.time.DateUtils {
 	 * 获取当前应用服务器时间的字符串表示，格式由{@link DateUtil#FMT_DATE_HHmm}来指定。
 	 */
 	public static String getCurrentTime() {
-
 		return DateUtil.formatDate(new Date(), DateUtil.FMT_DATE_HHmm);
 	}
 
@@ -323,7 +310,6 @@ public class DateUtil extends org.apache.commons.lang.time.DateUtils {
 	 * 获取当前应用服务器日期的字符串表示，格式由{@link DateUtil#FMT_DATE_YYYYMMDD}来指定。
 	 */
 	public static String getCurrentDate() {
-
 		return DateUtil.formatDate(new Date(), DateUtil.FMT_DATE_YYYYMMDD);
 	}
 
@@ -331,7 +317,6 @@ public class DateUtil extends org.apache.commons.lang.time.DateUtils {
 	 * 获取当前应用服务器日期的字符串表示，格式由{@link DateUtil#FMT_DATE_YYYYMM}来指定。
 	 */
 	public static String getCurrentYYYYMM() {
-
 		return DateUtil.formatDate(new Date(), DateUtil.FMT_DATE_YYYYMM);
 	}
 
@@ -339,13 +324,12 @@ public class DateUtil extends org.apache.commons.lang.time.DateUtils {
 	 * 获取当前应用服务器日期的字符串表示，格式由{@link DateUtil#FMT_DATE_YYYY}来指定。
 	 */
 	public static String getCurrentYYYY() {
-
 		return DateUtil.formatDate(new Date(), DateUtil.FMT_DATE_YYYY);
 	}
 
 	/**
 	 * 将一个日期时间的字符串表示从inFormat格式转换为outFormat格式。
-	 *
+	 * 
 	 * @param dStr
 	 *            日期时间的字符串。
 	 * @param inFormat
@@ -354,41 +338,39 @@ public class DateUtil extends org.apache.commons.lang.time.DateUtils {
 	 *            转换后的格式。
 	 * @return
 	 */
-	public static String convert(final String dStr, final String inFormat, final String outFormat) {
+	public static String convert(String dStr, String inFormat, String outFormat) {
 
-		final SimpleDateFormat sdf = new SimpleDateFormat(inFormat);
+		SimpleDateFormat sdf = new SimpleDateFormat(inFormat);
 		Date d = null;
 		try {
 			d = sdf.parse(dStr);
-		} catch (final ParseException pe) {
+		} catch (ParseException pe) {
 			System.out.println(pe.getMessage());
 		}
 
-		return DateUtil.dateToString(d, outFormat);
+		return dateToString(d, outFormat);
 
 	}
 
 	/**
 	 * 按给出的格式将输入的日期转换为字符串。
-	 *
+	 * 
 	 * @param currdate
 	 *            输入的date对象。
 	 * @param strFormat
 	 *            约定的格式。
 	 * @return 按输入时间及约定格式返回的字符串
 	 */
-	public static final String dateToString(final java.util.Date currdate,
-			final String strFormat) {
-
+	public static final String dateToString(java.util.Date currdate,
+			String strFormat) {
 		String returnDate = "";
 		try {
-			final SimpleDateFormat sdf = new SimpleDateFormat(strFormat);
-			if (currdate == null) {
+			SimpleDateFormat sdf = new SimpleDateFormat(strFormat);
+			if (currdate == null)
 				return returnDate;
-			} else {
+			else
 				returnDate = sdf.format(currdate);
-			}
-		} catch (final NullPointerException e) {
+		} catch (NullPointerException e) {
 		}
 		return returnDate;
 	}
@@ -402,15 +384,14 @@ public class DateUtil extends org.apache.commons.lang.time.DateUtils {
 	 * <li>如果长度为8，判断是否是yyyyMMdd格式。</li>
 	 * <li>如果长度为10，判断是否是yyyyMMddHH格式。</li>
 	 * <li>如果长度为12，判断是否是yyyyMMddHHmm格式。</li>
-	 *
+	 * 
 	 * @param currdate
 	 *            输入的时间
 	 * @param strFormat
 	 *            约字的格式
 	 * @return 按输入时间及约定格式返回的字符串
 	 */
-	public static final boolean checkIsDate(final String strDate) {
-
+	public static final boolean checkIsDate(String strDate) {
 		Date returnDate = null;
 		try {
 			if (strDate.length() == 4) {
@@ -424,7 +405,7 @@ public class DateUtil extends org.apache.commons.lang.time.DateUtils {
 			} else if (strDate.length() == 12) {
 				returnDate = DateUtil.parse(strDate, "yyyyMMddHHmm");
 			}
-		} catch (final Exception e) {
+		} catch (Exception e) {
 			return false;
 		}
 		if (returnDate != null) {
@@ -436,14 +417,14 @@ public class DateUtil extends org.apache.commons.lang.time.DateUtils {
 
 	/**
 	 * 获取某一个日期在一年中是第几周的日期。
+	 * 
 	 * 需要传递两个参数，第一个参数是要计算的日期，第二个参数指定周几作为一周的开始。
 	 * 可以参见Calendar.SATURDAY等常量。
-	 *
+	 * 
 	 * @return
 	 */
-	public static int getWeekInYear(final Date date, final int startOfWeek) {
-
-		final Calendar cld = Calendar.getInstance();
+	public static int getWeekInYear(Date date, int startOfWeek) {
+		Calendar cld = Calendar.getInstance();
 		cld.setTime(date);
 		cld.setFirstDayOfWeek(startOfWeek);
 

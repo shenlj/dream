@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<properties fileName="sql/commons.properties">SQL_COMMONS</properties>
+	<properties fileName="sql/demo.properties">SQL_DEMO</properties>
+</configuration>

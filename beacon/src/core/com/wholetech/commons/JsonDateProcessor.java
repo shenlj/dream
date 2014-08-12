@@ -9,26 +9,24 @@ import net.sf.json.processors.JsonValueProcessor;
 
 public class JsonDateProcessor implements JsonValueProcessor {
 
-	private final DateFormat format;
+  private DateFormat format;
 
-	public JsonDateProcessor(final String format) {
+  public JsonDateProcessor(String format) {
 
-		this.format = new SimpleDateFormat(format);
-	}
+    this.format = new SimpleDateFormat(format);
+  }
 
-	@Override
-	public Object processArrayValue(final Object value, final JsonConfig jsonConfig) {
+  public Object processArrayValue(Object value, JsonConfig jsonConfig) {
 
-		return "";
-	}
+    return "";
+  }
 
-	@Override
-	public Object processObjectValue(final String key, final Object value, final JsonConfig jsonConfig) {
+  public Object processObjectValue(String key, Object value, JsonConfig jsonConfig) {
 
-		if (value == null) {
-			return null;
-		}
+    if (value == null) {
+      return null;
+    }
 
-		return format.format((Date) value);
-	}
+    return this.format.format((Date) value);
+  }
 }

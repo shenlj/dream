@@ -17,12 +17,12 @@ import org.apache.struts2.config.Results;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mrs.sysmgr.entity.SysFile;
-import com.opensymphony.xwork2.Action;
 import com.wholetech.commons.MRSConstants;
+import com.wholetech.commons.entity.SysFile;
 import com.wholetech.commons.service.BaseService;
 import com.wholetech.commons.util.DateUtil;
 import com.wholetech.commons.util.PropertyXmlMgr;
+import com.wholetech.commons.util.StringUtil;
 import com.wholetech.commons.web.BaseAction;
 import com.wholetech.commons.web.JSONResult;
 
@@ -39,7 +39,7 @@ import com.wholetech.commons.web.JSONResult;
  */
 @ParentPackage("default")
 @Namespace("/file")
-@Results({ @Result(name = "input", value = "/errors/error.jsp") })
+@Results( { @Result(name = "input", value = "/errors/error.jsp") })
 public class FileAction extends BaseAction<SysFile> {
 
 	/**
@@ -56,19 +56,19 @@ public class FileAction extends BaseAction<SysFile> {
 	// 要上传的正文文件
 	private File contextDoc;
 
-	public void setFileOperationService(final FileOperationService fileOperationService) {
+	public void setFileOperationService(FileOperationService fileOperationService) {
 
 		this.fileOperationService = fileOperationService;
 	}
 
 	public FileOperationService getFileOperationService() {
 
-		return fileOperationService;
+		return this.fileOperationService;
 	}
 
 	/**
 	 * 功能描述：上传附件
-	 *
+	 * 
 	 * @author
 	 * @version 1.0
 	 * @see com.itc.oa.docs.web.action
@@ -78,27 +78,27 @@ public class FileAction extends BaseAction<SysFile> {
 	 */
 	public String uploadFile() throws UnsupportedEncodingException {
 
-		busiID = getParameter("busiID");
-		busiType = getParameter("busiType");
+		this.busiID = getParameter("busiID");
+		this.busiType = getParameter("busiType");
 		String[] fileIDs;
-		if (StringUtils.isEmpty(busiID)) {
-			fileIDs = fileOperationService.saveFiles(filesFileName, files);
+		if (StringUtils.isEmpty(this.busiID)) {
+			fileIDs = this.fileOperationService.saveFiles(this.filesFileName, this.files);
 		} else {
-			fileIDs = fileOperationService.saveFiles(busiID, busiType, filesFileName, files);
+			fileIDs = this.fileOperationService.saveFiles(this.busiID, this.busiType, this.filesFileName, this.files);
 		}
-		final StringBuffer sb = new StringBuffer();
+		StringBuffer sb = new StringBuffer();
 		if (fileIDs != null) {
-			for (final String fileID2 : fileIDs) {
+			for (String fileID2 : fileIDs) {
 				sb.append(MRSConstants.DEFAULT_STRING_SPLIT).append(fileID2);
 			}
 		}
 		renderText("success#" + sb.toString().substring(1));
-		return Action.NONE;
+		return NONE;
 	}
 
 	/**
 	 * 功能描述：删除文件
-	 *
+	 * 
 	 * @author
 	 * @version 1.0
 	 * @see
@@ -108,17 +108,17 @@ public class FileAction extends BaseAction<SysFile> {
 	 */
 	public String deleteFile() throws Exception {
 
-		fileID = getParameter("fileID");
-		if (fileOperationService.deleteFile(fileID, true)) {
+		this.fileID = getParameter("fileID");
+		if (this.fileOperationService.deleteFile(this.fileID, true)) {
 			renderText("success");
 		}
 
-		return Action.NONE;
+		return NONE;
 	}
 
 	/**
 	 * 功能描述：获取附件列表
-	 *
+	 * 
 	 * @author
 	 * @version 1.0
 	 * @see
@@ -127,18 +127,18 @@ public class FileAction extends BaseAction<SysFile> {
 	 */
 	public String getAttachmentsList() {
 
-		busiID = getParameter("busiID");
-		busiType = getParameter("busiType");
-		final List<SysFile> sysFileList = fileOperationService.getFileByBusi(busiID, busiType);
+		this.busiID = getParameter("busiID");
+		this.busiType = getParameter("busiType");
+		List<SysFile> sysFileList = this.fileOperationService.getFileByBusi(this.busiID, this.busiType);
 
-		final JSONArray files = JSONResult.list2Json(sysFileList, "id,fileName,logicFileName,busiId,busiType,remark");
+		JSONArray files = JSONResult.list2Json(sysFileList, "id,fileName,logicFileName,busiId,busiType,remark");
 		renderJson(files);
-		return Action.NONE;
+		return NONE;
 	}
 
 	/**
 	 * 功能描述：通过文件ID下载文件
-	 *
+	 * 
 	 * @author
 	 * @version 1.0
 	 * @see
@@ -147,63 +147,63 @@ public class FileAction extends BaseAction<SysFile> {
 	 */
 	public String downLoadFileByID() {
 
-		fileID = getParameter("fileID");
-		final SysFile sysFile = fileOperationService.getFileById(fileID);
+		this.fileID = getParameter("fileID");
+		SysFile sysFile = this.fileOperationService.getFileById(this.fileID);
 
 		getResponse().reset();
 		try {
-			final String sourceFileName = sysFile.getFileName();
+			String sourceFileName = sysFile.getFileName();
 			getResponse().setCharacterEncoding("utf-8");
 			getResponse().setHeader("Content-disposition",
 					"attachment;filename=" + encodingStr(sysFile.getLogicFileName()));
-			final String fileType = sourceFileName.substring(sourceFileName.lastIndexOf(".") + 1).toLowerCase();
-			final String contentType = PropertyXmlMgr.getString("MRSCONFIG", "file." + fileType);
+			String fileType = sourceFileName.substring(sourceFileName.lastIndexOf(".") + 1).toLowerCase();
+			String contentType = PropertyXmlMgr.getString("MRSCONFIG", "file." + fileType);
 			if (contentType != null) {
 				getResponse().setContentType(contentType);
 			} else {
 				getResponse().setContentType("bin");
 			}
-			final OutputStream os = getResponse().getOutputStream();
+			OutputStream os = getResponse().getOutputStream();
 			if (os != null) {
-				final boolean flag = fileOperationService.downloadFile(sysFile, os);
+				boolean flag = this.fileOperationService.downloadFile(sysFile, os);
 				if (!flag) {
-					logger.error("用户可能取消下载");
+					this.logger.error("用户可能取消下载");
 				}
 			}
 			getResponse().flushBuffer();
-		} catch (final IOException e) {
-			logger.error("用户可能取消下载");
+		} catch (IOException e) {
+			this.logger.error("用户可能取消下载");
 		}
 
-		return Action.NONE;
+		return NONE;
 	}
 
 	/**
 	 * 功能描述：获取附件列表
-	 *
+	 * 
 	 * @author
 	 * @version 1.0
 	 * @see
 	 * @return
 	 *         String
 	 */
-	public String encodingStr(final String str) {
+	public String encodingStr(String str) {
 
 		String returnFileName = "";
 		try {
 			returnFileName = URLEncoder.encode(str, "UTF-8");
-			returnFileName = StringUtils.replace(returnFileName, "+", "%20");
+			returnFileName = StringUtil.replace(returnFileName, "+", "%20");
 			returnFileName = new String(str.getBytes("GBK"), "ISO8859-1");
-			returnFileName = StringUtils.replace(returnFileName, " ", "%20");
-		} catch (final UnsupportedEncodingException e) {
-			logger.error("Don't support this encoding ...");
+			returnFileName = StringUtil.replace(returnFileName, " ", "%20");
+		} catch (UnsupportedEncodingException e) {
+			this.logger.error("Don't support this encoding ...");
 		}
 		return returnFileName;
 	}
 
 	/**
 	 * 功能描述：上传报告编写
-	 *
+	 * 
 	 * @author
 	 * @version 1.0
 	 * @see
@@ -213,30 +213,30 @@ public class FileAction extends BaseAction<SysFile> {
 	 */
 	public String uploadChapterDoc() throws UnsupportedEncodingException {
 
-		final String fileName = DateUtil.getCurrentDateTime() + ".doc";
-		filesFileName = new String[1];
-		files = new File[1];
-		filesFileName[0] = fileName;
-		files[0] = contextDoc;
-		busiID = getParameter("busiID");
-		busiType = getParameter("busiType");
-		fileID = getParameter("fileID");
+		String fileName = DateUtil.getCurrentDateTime() + ".doc";
+		this.filesFileName = new String[1];
+		this.files = new File[1];
+		this.filesFileName[0] = fileName;
+		this.files[0] = this.contextDoc;
+		this.busiID = getParameter("busiID");
+		this.busiType = getParameter("busiType");
+		this.fileID = getParameter("fileID");
 
-		if (StringUtils.isEmpty(fileID)) {
-			if (StringUtils.isNotEmpty(busiID) && StringUtils.isNotEmpty(busiType)) {
+		if (StringUtils.isEmpty(this.fileID)) {
+			if (StringUtils.isNotEmpty(this.busiID) && StringUtils.isNotEmpty(this.busiType)) {
 				// 业务ID与业务type不为空时
-				fileID = fileOperationService.saveFiles(busiID, busiType, filesFileName,
-						files)[0];
-				renderText("success#" + fileID);
+				this.fileID = this.fileOperationService.saveFiles(this.busiID, this.busiType, this.filesFileName,
+						this.files)[0];
+				renderText("success#" + this.fileID);
 			} else {
-				fileID = fileOperationService.saveFiles(filesFileName, files)[0];
-				renderText("success#" + fileID);
+				this.fileID = this.fileOperationService.saveFiles(this.filesFileName, this.files)[0];
+				renderText("success#" + this.fileID);
 			}
 		} else {
-			fileOperationService.executeReplaceFile(fileID, contextDoc);
+			this.fileOperationService.executeReplaceFile(this.fileID, this.contextDoc);
 			renderText("success");
 		}
-		return Action.NONE;
+		return NONE;
 	}
 
 	@Override
@@ -247,60 +247,60 @@ public class FileAction extends BaseAction<SysFile> {
 
 	public File getContextDoc() {
 
-		return contextDoc;
+		return this.contextDoc;
 	}
 
-	public void setContextDoc(final File contextDoc) {
+	public void setContextDoc(File contextDoc) {
 
 		this.contextDoc = contextDoc;
 	}
 
 	public String getBusiID() {
 
-		return busiID;
+		return this.busiID;
 	}
 
-	public void setBusiID(final String busiID) {
+	public void setBusiID(String busiID) {
 
 		this.busiID = busiID;
 	}
 
 	public String getFileID() {
 
-		return fileID;
+		return this.fileID;
 	}
 
-	public void setFileID(final String fileID) {
+	public void setFileID(String fileID) {
 
 		this.fileID = fileID;
 	}
 
 	public String getBusiType() {
 
-		return busiType;
+		return this.busiType;
 	}
 
-	public void setBusiType(final String busiType) {
+	public void setBusiType(String busiType) {
 
 		this.busiType = busiType;
 	}
 
 	public File[] getFiles() {
 
-		return files;
+		return this.files;
 	}
 
-	public void setFiles(final File[] files) {
+	public void setFiles(File[] files) {
 
 		this.files = files;
 	}
 
 	public String[] getFilesFileName() {
 
-		return filesFileName;
+		return this.filesFileName;
 	}
 
-	public void setFilesFileName(final String[] filesFileName) {
+	public void setFilesFileName(String[] filesFileName) {
 
 		this.filesFileName = filesFileName;
 	}

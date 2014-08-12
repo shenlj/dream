@@ -7,174 +7,174 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 public class SysCode extends BaseStandardEntity {
 
-	private static final long serialVersionUID = -8755636949381488914L;
+  private static final long serialVersionUID = -8755636949381488914L;
 
-	private String codeClass;
-	private String codeClassDesc;
-	private String code;
-	private String codeDesc;
-	private String spellCode;
-	// private String parentid;
-	private Integer displayOrder;
-	private String status;
-	private String treePath;
-	private String selectAble;
-	private Integer codeLevel;
-	private String editable;
-	private String appSysCode;
-	// 关联属性。
-	private SysCode parentCode;
-	private Set<SysCode> children = new HashSet<SysCode>(0);
+  private String codeClass;
+  private String codeClassDesc;
+  private String code;
+  private String codeDesc;
+  private String spellCode;
+  // private String parentid;
+  private Integer displayOrder;
+  private String status;
+  private String treePath;
+  private String selectAble;
+  private Integer codeLevel;
+  private String editable;
+  private String appSysCode;
+  // 关联属性。
+  private SysCode parentCode;
+  private Set<SysCode> children = new HashSet<SysCode>(0);
 
-	public String getCodeClass() {
+  public String getCodeClass() {
 
-		return codeClass;
-	}
+    return this.codeClass;
+  }
 
-	public void setCodeClass(final String codeClass) {
+  public void setCodeClass(String codeClass) {
 
-		this.codeClass = codeClass;
-	}
+    this.codeClass = codeClass;
+  }
 
-	public String getCodeClassDesc() {
+  public String getCodeClassDesc() {
 
-		return codeClassDesc;
-	}
+    return this.codeClassDesc;
+  }
 
-	public void setCodeClassDesc(final String codeClassDesc) {
+  public void setCodeClassDesc(String codeClassDesc) {
 
-		this.codeClassDesc = codeClassDesc;
-	}
+    this.codeClassDesc = codeClassDesc;
+  }
 
-	public String getCode() {
+  public String getCode() {
 
-		return code;
-	}
+    return this.code;
+  }
 
-	public void setCode(final String code) {
+  public void setCode(String code) {
 
-		this.code = code;
-	}
+    this.code = code;
+  }
 
-	public String getCodeDesc() {
+  public String getCodeDesc() {
 
-		return codeDesc;
-	}
+    return this.codeDesc;
+  }
 
-	public void setCodeDesc(final String codeDesc) {
+  public void setCodeDesc(String codeDesc) {
 
-		this.codeDesc = codeDesc;
-	}
+    this.codeDesc = codeDesc;
+  }
 
-	public String getSpellCode() {
+  public String getSpellCode() {
 
-		return spellCode;
-	}
+    return this.spellCode;
+  }
 
-	public void setSpellCode(final String spellCode) {
+  public void setSpellCode(String spellCode) {
 
-		this.spellCode = spellCode;
-	}
+    this.spellCode = spellCode;
+  }
 
-	public Integer getDisplayOrder() {
+  public Integer getDisplayOrder() {
 
-		return displayOrder;
-	}
+    return this.displayOrder;
+  }
 
-	public void setDisplayOrder(final Integer displayOrder) {
+  public void setDisplayOrder(Integer displayOrder) {
 
-		this.displayOrder = displayOrder;
-	}
+    this.displayOrder = displayOrder;
+  }
 
-	public String getStatus() {
+  public String getStatus() {
 
-		return status;
-	}
+    return this.status;
+  }
 
-	public void setStatus(final String status) {
+  public void setStatus(String status) {
 
-		this.status = status;
-	}
+    this.status = status;
+  }
 
-	public String getTreePath() {
+  public String getTreePath() {
 
-		return treePath;
-	}
+    return this.treePath;
+  }
 
-	public void setTreePath(final String treePath) {
+  public void setTreePath(String treePath) {
 
-		this.treePath = treePath;
-	}
+    this.treePath = treePath;
+  }
 
-	public String getSelectAble() {
+  public String getSelectAble() {
 
-		return selectAble;
-	}
+    return this.selectAble;
+  }
 
-	public void setSelectAble(final String selectAble) {
+  public void setSelectAble(String selectAble) {
 
-		this.selectAble = selectAble;
-	}
+    this.selectAble = selectAble;
+  }
 
-	public Integer getCodeLevel() {
+  public Integer getCodeLevel() {
 
-		return codeLevel;
-	}
+    return this.codeLevel;
+  }
 
-	public void setCodeLevel(final Integer codeLevel) {
+  public void setCodeLevel(Integer codeLevel) {
 
-		this.codeLevel = codeLevel;
-	}
+    this.codeLevel = codeLevel;
+  }
 
-	public SysCode getParentCode() {
+  public SysCode getParentCode() {
 
-		return parentCode;
-	}
+    return this.parentCode;
+  }
 
-	public void setParentCode(final SysCode parentCode) {
+  public void setParentCode(SysCode parentCode) {
 
-		this.parentCode = parentCode;
-	}
+    this.parentCode = parentCode;
+  }
 
-	public Set<SysCode> getChildren() {
+  public Set<SysCode> getChildren() {
 
-		return children;
-	}
+    return this.children;
+  }
 
-	public void setChildren(final Set<SysCode> children) {
+  public void setChildren(Set<SysCode> children) {
 
-		this.children = children;
-	}
+    this.children = children;
+  }
 
-	public SysCode getParent() {
+  public SysCode getParent() {
 
-		return parentCode;
-	}
+    return this.parentCode;
+  }
 
-	@Override
-	public String toString() {
+  @Override
+  public String toString() {
 
-		return new ToStringBuilder(this).append("id", getId()).append("类别", codeClass).toString();
-	}
+    return new ToStringBuilder(this).append("id", getId()).append("类别", this.codeClass).toString();
+  }
 
-	public String getEditable() {
+  public String getEditable() {
 
-		return editable;
-	}
+    return this.editable;
+  }
 
-	public void setEditable(final String editable) {
+  public void setEditable(String editable) {
 
-		this.editable = editable;
-	}
+    this.editable = editable;
+  }
 
-	public String getAppSysCode() {
+  public String getAppSysCode() {
 
-		return appSysCode;
-	}
+    return this.appSysCode;
+  }
 
-	public void setAppSysCode(final String appSysCode) {
+  public void setAppSysCode(String appSysCode) {
 
-		this.appSysCode = appSysCode;
-	}
+    this.appSysCode = appSysCode;
+  }
 
 }

@@ -19,22 +19,22 @@ import net.sf.json.JSONObject;
  */
 public class JSONToObject {
 
-	/**
-	 * json串转成相应类对象组
-	 * 
-	 * @param <T>
-	 * @param jsonStr
-	 * @param beanClass
-	 * @return
-	 */
-	public static <T> List<T> jsonToBeanList(final String jsonStr, final Class<T> beanClass) {
+  /**
+   * json串转成相应类对象组
+   * 
+   * @param <T>
+   * @param jsonStr
+   * @param beanClass
+   * @return
+   */
+  public static <T> List<T> jsonToBeanList(String jsonStr, Class<T> beanClass) {
 
-		final JSONArray jsonArray = JSONArray.fromObject(jsonStr);
-		final List<T> list = new ArrayList<T>();
-		for (int i = 0; i < jsonArray.size(); i++) {
-			final JSONObject jsonObj = JSONObject.fromObject(jsonArray.get(i));
-			list.add((T) JSONObject.toBean(jsonObj, beanClass));
-		}
-		return list;
-	}
+    JSONArray jsonArray = JSONArray.fromObject(jsonStr);
+    List<T> list = new ArrayList<T>();
+    for (int i = 0; i < jsonArray.size(); i++) {
+      JSONObject jsonObj = JSONObject.fromObject(jsonArray.get(i));
+      list.add((T) JSONObject.toBean(jsonObj, beanClass));
+    }
+    return list;
+  }
 }

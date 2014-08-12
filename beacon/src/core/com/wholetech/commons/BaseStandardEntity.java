@@ -6,94 +6,69 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * 实体类的父类。
- * 该类要求实体必须数据库中有以下字段：
- * 自然主键 - id</li>
- * 操作时间 - operateTime
- * 操作类型 - OperateType
- * 操作员编码 - OperatorCode
- * 操作员姓名 - OperatorName
- * <p>
- * 实体类要重写toString/equals/hashCode三个方法。
- * <p>
- */
-public class BaseStandardEntity extends BaseObject {
+public class BaseStandardEntity extends BaseObject implements
+		java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
-
 	protected Logger logger = LoggerFactory.getLogger(getClass());
-
-	private String operatorCode;
-	private String operatorName;
-	private String operateType;
 	private Date operateTime;
+	private String operaterCode;
+	private String operaterName;
+	private String delFlag;
 
 	public Date getOperateTime() {
-
-		return operateTime;
+		return this.operateTime;
 	}
 
-	public void setOperateTime(final Date operateTime) {
-
+	public void setOperateTime(Date operateTime) {
 		this.operateTime = operateTime;
 	}
 
 	@Override
 	public String toString() {
-
-		logger.warn("You should overwrite 'toString' method for {} so that it's readable when log this class",
-				this.getClass().getSimpleName());
-
-		return this.getClass().getSimpleName() + '@' + getId();
+	    this.logger.warn("You should overwrite 'toString' method for {} so that it's readable when log this class",
+	             this.getClass().getSimpleName());
+	    return this.getClass().getSimpleName() + '@' + getId();
 	}
 
 	@Override
-	public boolean equals(final Object o) {
-
-		if (this == o) {
-			return true;
-		}
-		if (!(o instanceof BaseStandardEntity)) {
-			return false;
-		}
-		final BaseStandardEntity object = (BaseStandardEntity) o;
-
-		// 如果两个id都为空，则认为是不等的对象
-		if (getId() == null && object.getId() == null) {
-			return false;
-		}
-
-		return new EqualsBuilder().append(getId(), object.getId()).isEquals();
+	public boolean equals(Object o) {
+	    if (this == o) {
+	      return true;
+	    }
+	    if (!(o instanceof BaseStandardEntity)) {
+	      return false;
+	    }
+	    final BaseStandardEntity object = (BaseStandardEntity) o;
+	
+	    // 如果两个id都为空，则认为是不等的对象
+	    if (getId() == null && object.getId() == null) {
+	      return false;
+	    }
+	    return new EqualsBuilder().append(getId(), object.getId()).isEquals();
 	}
 
-	public String getOperatorCode() {
-
-		return this.operatorCode;
+	public String getOperaterCode() {
+		return operaterCode;
 	}
 
-	public void setOperatorCode(final String operatorCode) {
-
-		this.operatorCode = operatorCode;
+	public void setOperaterCode(String operaterCode) {
+		this.operaterCode = operaterCode;
 	}
 
-	public String getOperatorName() {
-
-		return this.operatorName;
+	public String getDelFlag() {
+		return delFlag;
 	}
 
-	public void setOperatorName(final String operatorName) {
-
-		this.operatorName = operatorName;
+	public void setDelFlag(String delFlag) {
+		this.delFlag = delFlag;
 	}
 
-	public String getOperateType() {
-
-		return this.operateType;
+	public String getOperaterName() {
+		return operaterName;
 	}
 
-	public void setOperateType(final String operateType) {
-
-		this.operateType = operateType;
+	public void setOperaterName(String operaterName) {
+		this.operaterName = operaterName;
 	}
 }

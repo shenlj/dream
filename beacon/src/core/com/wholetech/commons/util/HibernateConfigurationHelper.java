@@ -12,84 +12,78 @@ import org.hibernate.mapping.Property;
 
 public class HibernateConfigurationHelper implements ConfigurationHelper {
 
-	private static Configuration hibernateConf = new Configuration();
+  private static Configuration hibernateConf = new Configuration();
 
-	private PersistentClass getPersistentClass(final Class clazz) {
+  private PersistentClass getPersistentClass(Class clazz) {
 
-		synchronized (HibernateConfigurationHelper.class) {
-			PersistentClass pc = HibernateConfigurationHelper.hibernateConf.getClassMapping(clazz.getName());
-			if (pc == null) {
-				HibernateConfigurationHelper.hibernateConf = HibernateConfigurationHelper.hibernateConf.addClass(clazz);
-				pc = HibernateConfigurationHelper.hibernateConf.getClassMapping(clazz.getName());
-			}
-			return pc;
-		}
-	}
+    synchronized (HibernateConfigurationHelper.class) {
+      PersistentClass pc = hibernateConf.getClassMapping(clazz.getName());
+      if (pc == null) {
+        hibernateConf = hibernateConf.addClass(clazz);
+        pc = hibernateConf.getClassMapping(clazz.getName());
+      }
+      return pc;
+    }
+  }
 
-	@Override
-	public String getTableName(final Class clazz) {
+  public String getTableName(Class clazz) {
 
-		return getPersistentClass(clazz).getTable().getName();
-	}
+    return getPersistentClass(clazz).getTable().getName();
+  }
 
-	@Override
-	public List getPkColumnName(final Class clazz) {
+  public List getPkColumnName(Class clazz) {
 
-		final List list = new ArrayList();
-		for (final Object column : getPersistentClass(clazz).getTable().getPrimaryKey().getColumns()) {
-			list.add(((Column) column).getName());
-		}
-		return list;
-	}
+    List list = new ArrayList();
+    for (Object column : getPersistentClass(clazz).getTable().getPrimaryKey().getColumns()) {
+      list.add(((Column) column).getName());
+    }
+    return list;
+  }
 
-	@Override
-	public String getColumnName(final Class clazz, final String propertyName) {
+  public String getColumnName(Class clazz, String propertyName) {
 
-		String columnName = null;
-		try {
-			final Iterator<Column> it = getPersistentClass(clazz).getProperty(
-					propertyName).getColumnIterator();
-			while (it.hasNext()) {
-				columnName = it.next().getName();
-			}
-			return columnName;
-		} catch (final Exception e) {
-			return null;
-		}
-	}
+    String columnName = null;
+    try {
+      Iterator<Column> it = getPersistentClass(clazz).getProperty(
+          propertyName).getColumnIterator();
+      while (it.hasNext()) {
+        columnName = it.next().getName();
+      }
+      return columnName;
+    } catch (Exception e) {
+      return null;
+    }
+  }
 
-	@Override
-	public String getAnyColumnName(final Class clazz, final String propertyName) {
+  public String getAnyColumnName(Class clazz, String propertyName) {
 
-		String columnName = null;
-		try {
-			final Iterator<Column> it = getPersistentClass(clazz).getProperty(
-					propertyName).getColumnIterator();
-			while (it.hasNext()) {
-				columnName = it.next().getName();
-				break;
-			}
-			return columnName;
-		} catch (final Exception e) {
-			return null;
-		}
-	}
+    String columnName = null;
+    try {
+      Iterator<Column> it = getPersistentClass(clazz).getProperty(
+          propertyName).getColumnIterator();
+      while (it.hasNext()) {
+        columnName = it.next().getName();
+        break;
+      }
+      return columnName;
+    } catch (Exception e) {
+      return null;
+    }
+  }
 
-	@Override
-	public Map getAnyType(final Class clazz, final String propertyName) {
+  public Map getAnyType(Class clazz, String propertyName) {
 
-		final Property property = getPersistentClass(clazz).getProperty(propertyName);
-		return ((org.hibernate.mapping.Any) property.getValue())
-				.getMetaValues();
-	}
+    Property property = getPersistentClass(clazz).getProperty(propertyName);
+    return ((org.hibernate.mapping.Any) property.getValue())
+        .getMetaValues();
+  }
 
-	@Override
-	public boolean isAnyType(final Class clazz, final String propertyName) {
+  public boolean isAnyType(Class clazz, String propertyName) {
 
-		final Property property = getPersistentClass(clazz).getProperty(propertyName);
-		if (property.getValue() instanceof org.hibernate.mapping.Any) {
-			return true;
-		}
-		return false;
-	}
+    Property property = getPersistentClass(clazz).getProperty(propertyName);
+    if (property.getValue() instanceof org.hibernate.mapping.Any) {
+      return true;
+    }
+    return false;
+  }
 }

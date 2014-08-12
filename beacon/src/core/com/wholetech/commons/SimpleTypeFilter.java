@@ -6,11 +6,10 @@ import net.sf.json.util.PropertyFilter;
 
 public class SimpleTypeFilter implements PropertyFilter {
 
-	@Override
-	public boolean apply(final Object source, final String name, final Object value) {
+  public boolean apply(Object source, String name, Object value) {
 
-		return value != null &&
-				!(value instanceof Boolean) && !(value instanceof Number) &&
-				!(value instanceof String) && !(value instanceof Date);
-	}
+    return value != null &&
+        !(value instanceof Boolean) && !(value instanceof Number) &&
+        !(value instanceof String) && !(value instanceof Date);
+  }
 }

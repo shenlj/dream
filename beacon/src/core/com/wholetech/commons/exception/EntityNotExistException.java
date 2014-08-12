@@ -12,18 +12,16 @@ public class EntityNotExistException extends RuntimeException {
 
 	}
 
-	public EntityNotExistException(final Class<?> clazz, final Serializable id) {
-
-		entityId = id;
+	public EntityNotExistException(Class<?> clazz, Serializable id) {
+		this.entityId = id;
 		this.clazz = clazz;
 	}
 
 	@Override
 	public String getMessage() {
-
-		final StringBuilder builder = new StringBuilder("实体[");
-		builder.append(this.clazz.getSimpleName()).append('@').append(entityId)
-		.append("]不存在。");
+		StringBuilder builder = new StringBuilder("实体[");
+		builder.append(clazz.getSimpleName()).append('@').append(this.entityId)
+				.append("]不存在。");
 		return builder.toString();
 	}
 

@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -17,6 +16,7 @@ import com.wholetech.commons.Constants;
 import com.wholetech.commons.exception.EntityNotExistException;
 import com.wholetech.commons.query.Page;
 import com.wholetech.commons.service.BaseService;
+import com.wholetech.commons.util.BeanUtil;
 import com.wholetech.commons.util.GenericsUtil;
 
 /**
@@ -25,11 +25,11 @@ import com.wholetech.commons.util.GenericsUtil;
  * 3. 对关联参数的处理，只要子类声明实现了ParameterNameAware，则具备了该能力。默认关闭这种能力</li>
  * <p>
  * <strong>重点一</strong>： 在action的具体实现类中，采用以下方式来来声明：
- *
+ * 
  * <pre>
  *   &at;ParentPackage("default")
  *   &at;Namespace("/monitor")
- *   &at;Results({
+ *   &at;Results({ 
  *      &at;Result(name = "list", value = "/app/monitor/main.jsp", type=org.apache.struts2.dispatcher.ServletRedirectResult.class),
  *      &at;Result(name = "runstate", value = "/app/home/runState.jsp")
  *   })
@@ -39,7 +39,7 @@ import com.wholetech.commons.util.GenericsUtil;
  *      }
  *   }
  * </pre>
- *
+ * 
  * 其中ParantPackage中对应struts.xml中定义的package元素的name； namespace中的将被用到url中，见重点二。 <br />
  * <br />
  * <br />
@@ -96,249 +96,250 @@ import com.wholetech.commons.util.GenericsUtil;
  */
 @SuppressWarnings("unchecked")
 abstract public class BaseAction<T> extends ComnAction implements
-		ModelDriven<T>, Preparable {
+    ModelDriven<T>, Preparable {
 
-	protected static final String LIST = "list";
+  protected static final String LIST = "list";
 
-	protected Page<T> page = new Page<T>();
-	protected String scolumns;
-	protected int idisplayLength;
-	protected int secho;
-	protected int idisplayStart;
-	/** Action所管理的Entity类型. */
-	protected Class<T> entityClass;
+  protected Page<T> page = new Page<T>();
+  protected String scolumns;
+  protected int idisplayLength;
+  protected int secho;
+  protected int idisplayStart;
+  /** Action所管理的Entity类型. */
+  protected Class<T> entityClass;
 
-	protected T entityForm;
+  protected T entityForm;
 
-	/** preparable接口要实现的方法，现在写成空实现 */
-	@Override
-	public void prepare() throws Exception {
+  /** preparable接口要实现的方法，现在写成空实现 */
+  public void prepare() throws Exception {
 
-		// donothing
-	}
+    // donothing
+  }
 
-	/** 在save()前执行二次绑定. */
-	public void prepareSave() throws Exception {
+  /** 在save()前执行二次绑定. */
+  public void prepareSave() throws Exception {
 
-		prepareModel();
-	}
+    prepareModel();
+  }
 
-	public void prepareList() throws Exception {
+  public void prepareList() throws Exception {
 
-	}
+  }
 
-	public void prepareLoad() throws Exception {
+  public void prepareLoad() throws Exception {
 
-		prepareModel();
-	}
+    prepareModel();
+  }
 
-	/**
-	 * 获得EntityManager类，必须在子类实现
-	 */
-	abstract protected BaseService<T> getBaseService();
+  /**
+   * 获得EntityManager类，必须在子类实现
+   */
+  abstract protected BaseService<T> getBaseService();
 
-	protected Serializable getKey() {
+  protected Serializable getKey() {
 
-		final String id = getParameter(Constants.DEFAULT_ID_NAME);
-		if (StringUtils.isBlank(id)) {
-			return null;
-		}
-		return id;
-	}
+    String id = getParameter(Constants.DEFAULT_ID_NAME);
+    if (StringUtils.isBlank(id)) {
+      return null;
+    }
+    return id;
+  }
 
-	@Override
-	public T getModel() {
+  public T getModel() {
 
-		return this.entityForm;
-	}
+    return this.entityForm;
+  }
 
-	protected void prepareModel() throws Exception {
+  protected void prepareModel() throws Exception {
 
-		// 获得有效的参数(主键)
-		final Serializable id = this.getKey();
+    // 获得有效的参数(主键)
+    Serializable id = this.getKey();
 
-		if (id != null) {
-			logger.debug("准备实体{}@{}", this.getEntityClass().getName(), id);
-			this.entityForm = getBaseService().get(id);
-			if (this.entityForm == null) {
-				throw new EntityNotExistException(this.getEntityClass(), id);
-			}
-		} else {
-			if (this.entityForm == null) {
-				this.entityForm = getNewEntity();
-			}
-		}
+    if (id != null) {
+      this.logger.debug("准备实体{}@{}", this.getEntityClass().getName(), id);
+      this.entityForm = getBaseService().get(id);
+      if (this.entityForm == null) {
+        throw new EntityNotExistException(this.getEntityClass(), id);
+      }
+    } else {
+      if (this.entityForm == null) {
+        this.entityForm = getNewEntity();
+      }
+    }
 
-		if (this instanceof ParameterNameAware) {
-			handleCascadeId();
-		}
-	}
+    if (this instanceof ParameterNameAware) {
+      handleCascadeId();
+    }
+  }
 
-	/**
-	 * 取得entityClass的函数. JDK1.4不支持泛型的子类可以抛开Class<T> entityClass,重载此函数达到相同效果。
-	 */
-	protected Class<T> getEntityClass() {
+  /**
+   * 取得entityClass的函数. JDK1.4不支持泛型的子类可以抛开Class<T> entityClass,重载此函数达到相同效果。
+   */
+  protected Class<T> getEntityClass() {
 
-		return this.entityClass;
-	}
+    return this.entityClass;
+  }
 
-	/**
-	 * 构造函数. 通过对T的反射获得entity class
-	 */
-	public BaseAction() {
+  /**
+   * 构造函数. 通过对T的反射获得entity class
+   */
+  public BaseAction() {
 
-		try {
-			this.entityClass = GenericsUtil.getGenericClass(getClass());
-		} catch (final Exception e) {
-			logger.error("初始化action时出错", e);
-		}
-	}
+    try {
+      this.entityClass = GenericsUtil.getGenericClass(getClass());
+    } catch (Exception e) {
+      this.logger.error("初始化action时出错", e);
+    }
+  }
 
-	/**
-	 * url参数未定义method时的默认Action函数. 默认为分页查询List Action.
-	 */
-	@Override
-	public String execute() {
+  /**
+   * url参数未定义method时的默认Action函数. 默认为分页查询List Action.
+   */
+  @Override
+  public String execute() {
 
-		return "";
-	}
+    return "";
+  }
 
-	/**
-	 * 新建业务对象的函数.
-	 */
-	protected T getNewEntity() throws InstantiationException, IllegalAccessException {
+  /**
+   * 新建业务对象的函数.
+   */
+  protected T getNewEntity() throws InstantiationException, IllegalAccessException {
 
-		T object = null;
-		final Class<T> clazz = getEntityClass();
+    T object = null;
+    Class<T> clazz = getEntityClass();
 
-		object = clazz.newInstance();
-		return object;
-	}
+    object = clazz.newInstance();
+    return object;
+  }
 
-	public boolean acceptableParameterName(final String parameterName) {
+  public boolean acceptableParameterName(String parameterName) {
 
-		if ("id".equals(parameterName)
-				&& StringUtils.isBlank(getParameter(parameterName))) {
-			return false;
-		}
+    if ("id".equals(parameterName)
+        && StringUtils.isBlank(getParameter(parameterName))) {
+      return false;
+    }
 
-		// 如果以.id结尾，则要致其对应的属性字段为空
-		if (parameterName.endsWith(".id")) {
-			final String property = StringUtils.substringBeforeLast(parameterName,
-					".id");
+    // 如果以.id结尾，则要致其对应的属性字段为空
+    if (parameterName.endsWith(".id")) {
+      String property = StringUtils.substringBeforeLast(parameterName,
+          ".id");
 
-			if (StringUtils.isBlank(getParameter(parameterName))
-					&& property.indexOf('.') == -1 && this.getModel() != null) {
-				try {
-					BeanUtils.setProperty(this.getModel(), property, null);
-				} catch (final Exception e) {
-					// 不做任何事情，只是为了对付hibernate映射的问题
-				}
-			}
-			return false;
-		}
+      if (StringUtils.isBlank(getParameter(parameterName))
+          && property.indexOf('.') == -1 && this.getModel() != null) {
+        try {
+          BeanUtil.setProperty(this.getModel(), property, null);
+        } catch (Exception e) {
+          // 不做任何事情，只是为了对付hibernate映射的问题
+        }
+      }
+      return false;
+    }
 
-		return true;
-	}
+    return true;
+  }
 
-	private void handleCascadeId() {
+  private void handleCascadeId() {
 
-		final ActionContext ac = ActionContext.getContext();
-		final T entityForm = this.getModel();
+    ActionContext ac = ActionContext.getContext();
+    T entityForm = this.getModel();
 
-		final Map parameters = ac.getParameters();
+    Map parameters = ac.getParameters();
 
-		for (final Iterator iterator = parameters.entrySet().iterator(); iterator
-				.hasNext();) {
-			final Map.Entry entry = (Map.Entry) iterator.next();
-			final String key = (String) entry.getKey();
+    for (Iterator iterator = parameters.entrySet().iterator(); iterator
+        .hasNext();) {
+      Map.Entry entry = (Map.Entry) iterator.next();
+      String key = (String) entry.getKey();
 
-			// 如果是以id结尾，则例行检查
-			if (key.endsWith(".id")) {
-				final String property = key.substring(0, key.length() - 3);
-				final String[] arrId = (String[]) entry.getValue();
-				if (property.indexOf('.') != -1 || arrId.length > 1) {
-					// 如果是多重关联，则不予处理
-					continue;
-				}
+      // 如果是以id结尾，则例行检查
+      if (key.endsWith(".id")) {
+        String property = key.substring(0, key.length() - 3);
+        String[] arrId = (String[]) entry.getValue();
+        if (property.indexOf('.') != -1 || arrId.length > 1) {
+          // 如果是多重关联，则不予处理
+          continue;
+        }
 
-				try {
-					if (StringUtils.isBlank(arrId[0])) {
-						// 如果id为空，则将此属性置为空
-						PropertyUtils.setProperty(entityForm, property, null);
-					} else {
-						final PropertyDescriptor pd = PropertyUtils
-								.getPropertyDescriptor(entityForm, property);
-						final Object cascadeProperty = this.getBaseService().get(
-								pd.getPropertyType(), arrId[0]);
-						PropertyUtils.setProperty(entityForm, property,
-								cascadeProperty);
-					}
-				} catch (final Exception e) {
-					// 不做任何事情，只是为了对付hibernate映射的问题
-				}
-			}
-		}
-	}
+        try {
+          if (StringUtils.isBlank(arrId[0])) {
+            // 如果id为空，则将此属性置为空
+            PropertyUtils.setProperty(entityForm, property, null);
+          } else {
+            PropertyDescriptor pd = PropertyUtils
+                .getPropertyDescriptor(entityForm, property);
+            Object cascadeProperty = this.getBaseService().get(
+                pd.getPropertyType(), arrId[0]);
+            PropertyUtils.setProperty(entityForm, property,
+                cascadeProperty);
+          }
+        } catch (Exception e) {
+          // 不做任何事情，只是为了对付hibernate映射的问题
+        }
+      }
+    }
+  }
 
-	public String getScolumns() {
+  public String getScolumns() {
 
-		return this.scolumns;
-	}
+    return this.scolumns;
+  }
 
-	public void setScolumns(final String scolumns) {
+  public void setScolumns(String scolumns) {
 
-		this.scolumns = scolumns;
-	}
+    this.scolumns = scolumns;
+  }
 
-	public Page<T> getPage() {
+  public Page<T> getPage() {
 
-		return this.page;
-	}
+    return this.page;
+  }
 
-	public void setPage() {
+  public void setPage() {
 
-		this.page.setIdisplayLength(this.idisplayLength);
-		this.page.setSecho(this.secho);
-		this.page.setIdisplayStart(this.idisplayStart);
-	}
+    this.page.setIdisplayLength(this.idisplayLength);
+    this.page.setSecho(this.secho);
+    this.page.setIdisplayStart(this.idisplayStart);
+  }
 
-	public int getIdisplayLength() {
+  public int getIdisplayLength() {
 
-		return this.idisplayLength;
-	}
+    return this.idisplayLength;
+  }
 
-	public void setIdisplayLength(final int idisplayLength) {
+  public void setIdisplayLength(int idisplayLength) {
 
-		this.idisplayLength = idisplayLength;
-	}
+    this.idisplayLength = idisplayLength;
+  }
 
-	public int getSecho() {
+  public int getSecho() {
 
-		return this.secho;
-	}
+    return this.secho;
+  }
 
-	public void setSecho(final int secho) {
+  public void setSecho(int secho) {
 
-		this.secho = secho;
-	}
+    this.secho = secho;
+  }
 
-	public int getIdisplayStart() {
+  public int getIdisplayStart() {
 
-		return this.idisplayStart;
-	}
+    return this.idisplayStart;
+  }
 
-	public void setIdisplayStart(final int idisplayStart) {
+  public void setIdisplayStart(int idisplayStart) {
 
-		this.idisplayStart = idisplayStart;
-	}
-
-	/**
-	 * 获取登录对象(获取后用user强制转换下)
-	 **/
-	public Object getLoginObject() {
-
-		return getSession().getAttribute(Constants.USER_IN_SESSION);
-	}
+    this.idisplayStart = idisplayStart;
+  }
+  
+  /**
+   *获取登录对象(获取后用user强制转换下)
+   **/
+  public Object getLoginObject(){
+	  return this.getSession().getAttribute(Constants.USER_IN_SESSION);
+  }
+  
+  public Map getUserAuth(){
+	  return (Map)this.getSession().getAttribute(Constants.User_Auth);
+  }
 
 }

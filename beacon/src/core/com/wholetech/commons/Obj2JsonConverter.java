@@ -10,40 +10,40 @@ import net.sf.json.util.CycleDetectionStrategy;
 
 public abstract class Obj2JsonConverter {
 
-	public static final JSONObject EMPTY_JSON = new JSONObject();
-	protected JsonConfig jc = new JsonConfig();
+  public static final JSONObject EMPTY_JSON = new JSONObject();
+  protected JsonConfig jc = new JsonConfig();
 
-	public Obj2JsonConverter() {
+  public Obj2JsonConverter() {
 
-		defaultSetupJsonConfig(jc);
-	}
+    defaultSetupJsonConfig(this.jc);
+  }
 
-	protected void defaultSetupJsonConfig(final JsonConfig jc) {
+  protected void defaultSetupJsonConfig(JsonConfig jc) {
 
-		jc.setCycleDetectionStrategy(CycleDetectionStrategy.NOPROP);
-		jc.registerJsonValueProcessor(Date.class, new JsonDateProcessor(Constants.DEFAULT_DATETIME_FORMAT));
-	}
+    jc.setCycleDetectionStrategy(CycleDetectionStrategy.NOPROP);
+    jc.registerJsonValueProcessor(Date.class, new JsonDateProcessor(Constants.DEFAULT_DATETIME_FORMAT));
+  }
 
-	public JSONObject toJSONObject(final Object obj) {
+  public JSONObject toJSONObject(Object obj) {
 
-		return JSONObject.fromObject(obj, jc);
-	}
+    return JSONObject.fromObject(obj, this.jc);
+  }
 
-	public JSONArray toJSONArray(final Collection<?> collection) {
+  public JSONArray toJSONArray(Collection<?> collection) {
 
-		final JSONArray ja = new JSONArray();
-		for (final Object obj : collection) {
-			ja.add(toJSONObject(obj));
-		}
-		return ja;
-	}
+    JSONArray ja = new JSONArray();
+    for (Object obj : collection) {
+      ja.add(toJSONObject(obj));
+    }
+    return ja;
+  }
 
-	public String toJSONString(final Object pojo) {
+  public String toJSONString(Object pojo) {
 
-		if (pojo instanceof Collection) {
-			return toJSONArray((Collection) pojo).toString();
-		}
+    if (pojo instanceof Collection) {
+      return toJSONArray((Collection) pojo).toString();
+    }
 
-		return toJSONObject(pojo).toString();
-	}
+    return toJSONObject(pojo).toString();
+  }
 }
