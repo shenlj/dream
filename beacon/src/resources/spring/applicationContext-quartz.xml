@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+	
+	<!-- 
+		去掉顶层的default-autowire="byName"属性配置，
+		因为org.springframework.scheduling.quartz.SchedulerFactoryBean有dataSource属性，自动注入会有问题。
+	-->
+	<bean id="schedulerDuty" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<!-- 约跑任务表定时任务
+				<ref local="updateTaskztTrigger"/> -->
+			</list>
+		</property>
+		<property name="configLocation" value="classpath:conf/quartz.properties">
+		</property>
+	</bean>
+
+	<!-- 定时任务示例。 
+	<bean id="exampleJobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="exampleJob" />
+		<property name="startDelay" value="${exampleJob.delay}" />
+		<property name="repeatInterval" value="${exampleJob.syncInterval}" />
+	</bean>
+	<bean id="exampleJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="concurrent" value="false" />
+		<property name="targetObject" ref="exampleJobService" />
+		<property name="targetMethod" value="jobMethod" />
+	</bean>
+	-->
+	<!-- 格式: [秒] [分] [小时] [日] [月] [周] [年] -->
+	<!--每隔15秒-->
+	<!--0 0 15 * * ?-->
+	<!--每日15时-->
+	<!--0 0 15 * * ?-->
+	<!--每周周五15时-->
+	<!--0 0 15 ? * FRI-->
+	<!--每月最后一天23时59分-->
+	<!--0 59 23 L * ?-->
+	<!--每月一日0时0分-->
+	<!--0 0 0 1 * ?-->
+	<!--每季一日0时0分-->
+	<!--0 0 0 1 1,4,7,10 ?-->
+	<!--每年最后一天23时59分-->
+	<!--0 59 23 31 DEC ? *-->
+	<!--每年一月一日0时0分-->
+	<!--0 0 0 1 JAN ? *-->
+	
+	<!-- 选课任务状态变化 job 发布到进行选课，从进行选课到结束选课 24小时执行一次 creat by Gary Gao 2012-4-28 5分钟运行一次-->
+
+	
+	<!-- 整点执行
+    <bean id="updateTaskztTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+        <property name="jobDetail" ref="updateTaskJob" />
+        <property name="cronExpression" value="0 0 0-23 * * ?" />
+    </bean>
+    <bean id="updateTaskJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="concurrent" value="false" />
+        <property name="targetObject" ref="znshGlService" />
+        <property name="targetMethod" value="executeTaskZt" />
+    </bean> -->
+	
+   
+	
+</beans>

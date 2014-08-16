@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd"
+	default-autowire="byName">
+	
+	<!-- 管理session -->
+	<bean id="sessionInfoHolder" class="com.wholetech.commons.SessionInfoHolderImp" />
+	 <!-- 文件上传下载 
+   <bean id="fileOperationService" class="com.wholetech.commons.file.FileOperationServiceImp" />-->
+	<!-- 此id名不能变，在框架中需要用到此id名，用来注入commonDao。 -->
+	<bean scope="singleton" id="commonDao" class="com.wholetech.commons.dao.CommonDaoImp" />
+	
+	<!--
+		Message source for this context, loaded from localized "messages_xx"
+		files
+	-->
+	<!-- i18n Resource文件bundles -->
+	<bean scope="singleton" id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>i18n/messages</value>
+				<value>i18n/errors</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean scope="singleton" id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath*:conf/jdbc.properties</value>
+        		<value>classpath*:conf/hibernate.properties</value>
+			</list>
+		</property>
+	</bean>
+	<bean scope="singleton" id="dataSource"
+		class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="initialSize" value="1" />
+		<property name="maxActive" value="2" />
+		<property name="maxIdle" value="1" />
+		<property name="minIdle" value="1" />
+		<property name="logAbandoned" value="true" />
+		<property name="removeAbandoned" value="true" />
+		<property name="removeAbandonedTimeout" value="20" />
+		<property name="maxWait" value="1000" />
+	</bean>
+
+	 <!-- 数据源定义,使用应用服务器连接池
+	 <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean" >
+	  	<property name="jndiName" value="${jdbc.jndiname}" />
+	 </bean>
+ 	 -->
+
+	<!-- 通过JDBC模版获取数据库连接 -->
+	<bean scope="singleton" id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- 定义对lob字段的处理，采用默认的lobHandler。	 -->
+	<bean scope="singleton" id="lobHandler"
+		class="org.springframework.jdbc.support.lob.DefaultLobHandler"
+		lazy-init="true" />
+
+	<bean scope="singleton" id="interceptorsProxy" class="com.wholetech.commons.dao.MrsHibernateInterceptor">
+		<property name="sessionInfoHolder" ref="sessionInfoHolder" />
+	</bean>
+	
+
+	<!--Hibernate SessionFatory-->
+	<bean scope="singleton" id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+    	<property name="lobHandler" ref="lobHandler" />
+		<property name="mappingDirectoryLocations">
+			<list>
+            	<value>classpath*:/com/beacon/demo/entity</value>
+			</list>
+		</property>
+		
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+				<prop key="hibernate.jdbc.batch_size">${hibernate.jdbc.batch_size}</prop>
+				<prop key="hibernate.jdbc.fetch_size">${hibernate.jdbc.fetch_size}</prop>
+				<prop key="hibernate.cache.use_second_level_cache">${hibernate.cache.use_second_level_cache}</prop>
+				<prop key="hibernate.cache.provider_class">${hibernate.cache.provider_class}</prop>
+				<prop key="hibernate.cache.use_query_cache">${hibernate.cache.use_query_cache}</prop>
+			</props>
+		</property>
+		<property name="entityInterceptor" ref="interceptorsProxy" />
+	</bean>
+
+	<bean scope="singleton" id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- 以AspectJ方式 定义 AOP -->
+	<!-- 
+        通配符的含义：
+        第一个 * —— 通配 任意返回值类型
+        第二个 * —— 通配 包com.evan.crm.service下的任意class
+        第三个 * —— 通配 包com.evan.crm.service下的任意class的任意方法
+        第四个 .. —— 通配 方法可以有0个或多个参数
+   -->
+	<aop:config>
+		<aop:pointcut id="txPointcut"  expression="execution(* com.beacon..*Service.*(..))   or execution(* com.wholetech..*Service.*(..))"/>
+		<aop:advisor pointcut-ref="txPointcut" advice-ref="txAdvice" />		
+	</aop:config>
+
+	<!--
+		基本事务定义,使用transactionManager作事务管理,默认get*方法的事务为readonly,其余方法按默认设置.
+		默认的设置请参考Spring文档事务一章.
+	-->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="get*" read-only="true" propagation="SUPPORTS" />
+			<tx:method name="find*" read-only="true" propagation="SUPPORTS" />
+			<tx:method name="search*" read-only="true" propagation="SUPPORTS" />
+			<tx:method name="check*" read-only="true" propagation="SUPPORTS" />
+			<tx:method name="load*" read-only="true" propagation="SUPPORTS" />
+			<tx:method name="create*" />
+			<tx:method name="save*" />
+			<tx:method name="update*" />
+			<tx:method name="delete*" />
+			<tx:method name="remove*" />
+			<tx:method name="batch*" />
+			<tx:method name="execute*" />
+			<tx:method name="upload*" />
+		</tx:attributes>
+	</tx:advice>
+	
+	<!-- sql获取方式的配置，有多个sql配置文件，采用别名列表配置，列表顺序为查找的顺序。 -->
+	<bean scope="singleton" id="sqlGetter" class="com.wholetech.commons.dao.SqlGetter">
+		<property name="aliasNames">
+			<list>
+				<value>SQL_COMMONS</value>
+				<value>SQL_DEMO</value>
+			</list>
+		</property>
+	</bean>
+	
+</beans>

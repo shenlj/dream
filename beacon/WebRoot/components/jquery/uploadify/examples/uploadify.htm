@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+		<title>文件上传示例代码</title>
+		
+		<!-- 
+			必须引入的文件：jquery-1.4.2.js、jquery.util.js、jquery.uploadify.js、jquery.uploadify.css。
+		 -->
+		<script type="text/javascript" src="../../jquery.js"></script>
+		<script type="text/javascript" src="../jquery.plugin.min.js"></script>
+		<script type="text/javascript" src="../jquery.util.js"></script>
+		<script type="text/javascript" src="../js/swfobject.js"></script>
+	    <script type="text/javascript" src="../js/jquery.uploadify.js"></script> 
+		<script type="text/javascript" src="../../hiAlert/js/jquery.hiAlerts.js"></script>
+		
+		<link rel="stylesheet" type="text/css" href="../../../css/base.css" />
+		<link rel="stylesheet" type="text/css" href="../../../css/main.css" />
+		<link rel="stylesheet" type="text/css" href="../css/uploadify.css" />
+		<link rel="stylesheet" type="text/css" href="../../hiAlert/css/jquery.hiAlerts.css" />
+		
+		<style>
+			#upload_info{
+				width: 220px;
+				color: red;
+			}
+			#selectBtn{
+				position: relative;
+				float: left;
+				left: o;
+				width: 50px;
+			}
+			#selectBtnUploader{
+				position: relative;
+				float: left;
+				left: -50px;
+			}
+			#upload_file_queue {
+				width: 400px;
+				height: 100px;
+				overflow: auto;
+				border: 1px solid #E5E5E5;
+				margin-bottom: 10px;
+			}
+			#uploadDiv{
+				width: 500px;
+				height: 400px;
+				margin: 5px;
+			}
+		</style>
+		<script type="text/javascript">
+			$(function(){
+
+				var uploadable = false;
+				var $upload_file = $("#selectBtn").uploadify({
+					uploader   : 'uploadify.swf',
+					script     : 'uploadify.php',
+					cancelImg  : 'cancel.png',
+					expressInstall : 'expressinstall.swf',							
+					multi      : false,
+					fileDesc   : '请选择bmp,gif,png,exe,mp3',
+					folder     : '/uploads',
+					fileExt    : '*.bmp;*.gif;*.png;*.exe;*.mp3;*.txt',
+					sizeLimit  : 1073741824,
+					buttonText : '浏览 ',
+					buttonImg  : '/images/browse.gif',
+					width      : 50,
+					height     : 25,
+					wmode      : 'transparent',
+					queueID    : 'upload_file_queue',
+					simUploadLimit : 1,
+					onSelect   : function(event, queueId, fileObj){
+						jQuery("#upload_info").css("display", "none");
+						uploadable = true;
+					},
+					onCancel   : function(event, queueId, fileObj, data){
+						jQuery("#upload_info").css("display", "none");
+						if(data.fileCount == 0){
+							uploadable = false;
+						}
+						return true;
+					},
+					onError : function(event, ID, fileObj, errorObj){
+						uploadable = false;
+						return true;
+					},
+					onComplete : function(event, queueId, fileObj, response, data){
+						var obj = jQuery.parseJSON(response);
+						jQuery("#upload_info").css("display", "");
+						if(obj.success == false){
+							jQuery("#upload_info").text("错误：" + obj.msg);
+							uploadable = false;
+						}else{
+							jQuery("#upload_info").text("上传成功");
+						}
+					},
+					removeCompleted : true
+					
+				});
+				
+				$('#uploadBtn').click(function(){
+					if(!uploadable){
+						hiAlert('请先选择文件', '提示');
+						return; 
+					}
+					
+					//jQuery("#selectBtn").uploadifySettings('scriptData', {'path':'uploads'});
+					jQuery("#uploadBtn").uploadifyUpload();
+					return true;
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<div id="uploadDiv">
+			<div id="upload_info"></div>
+			<div id="upload_file_queue"></div>
+			<button class="but" id="selectBtn" >浏览</button>
+		
+			<button class="but" id="uploadBtn" >上传</button>
+			
+		</div>
+	</body>
+</html>

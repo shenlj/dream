@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN" "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+  <constant name="struts.enable.DynamicMethodInvocation" value="true" /> 
+  <constant name="struts.codebehind.pathPrefix" value="/app/" />
+  <constant name="struts.devMode" value="true" /> 
+  <constant name="struts.custom.i18n.resources" value="i18n/messages" />
+  <constant name="struts.multipart.maxSize" value="524288000" />
+  <constant name="struts.ui.theme" value="simple" />
+  <package name="default-with-exceptions" extends="struts-default"  abstract="true">
+    <!-- 全局results配置 -->
+    <global-results>
+      <result name="exception-error-page">/errors/error.jsp</result>
+      <result name="success">/common/success.jsp</result>
+      <result name="failure">/common/failure.jsp</result>
+      <result name="struts-error">/errors/error-struts.jsp</result>
+    </global-results>
+    <!-- 全局exception配置 -->
+    <global-exception-mappings>
+      <exception-mapping result="exception-error-page" exception="java.lang.Exception"></exception-mapping>
+    </global-exception-mappings>
+  </package>
+  <package name="default" extends="default-with-exceptions">
+    <interceptors>
+      <interceptor name="strutserror" class="com.wholetech.commons.StrutsErrorInterceptor" />
+    
+      <interceptor-stack name="myDefaultStack">
+        <interceptor-ref name="exception">
+          <param name="logEnabled">true</param>
+          <param name="logCategory">com.wholetech</param>
+          <param name="logLevel">ERROR</param>
+        </interceptor-ref>
+        <interceptor-ref name="prepare" />
+        <interceptor-ref name="modelDriven" />
+        <interceptor-ref name="fileUpload" />
+        <interceptor-ref name="params">
+          <param name="excludeParams">dojo\..*,^struts\..*,^search\$.*</param>
+        </interceptor-ref>
+        <interceptor-ref name="strutserror" />
+      </interceptor-stack>
+    </interceptors>
+
+    <default-interceptor-ref name="myDefaultStack" />
+  </package>
+</struts>    
